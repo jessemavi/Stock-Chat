@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
 const { makeExecutableSchema } = require('graphql-tools');
+const connectToDB = require('./db/index');
 
 // Some fake data
 const books = [
@@ -40,6 +41,7 @@ const schema = makeExecutableSchema({
 });
 
 const app = express();
+connectToDB();
 
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
