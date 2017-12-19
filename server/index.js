@@ -2,37 +2,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
 const { makeExecutableSchema } = require('graphql-tools');
-const connectToDB = require('./db/index');
+const { fileLoader, mergeTypes, mergeResolvers } = require('merge-graphql-schemas');
+const path = require('path');
 
-// Some fake data
-const books = [
-  {
-    title: "Harry Potter and the Sorcerer's stone",
-    author: 'J.K. Rowling'
-  },
-  {
-    title: 'Jurassic Park',
-    author: 'Michael Crichton'
-  }
-];
-
-// The GraphQL schema in string form
-const typeDefs = `
-  type Query {
-    books: [Book] 
-  }
-
-  type Book { 
-    title: String 
-    author: String
-  }
-`;
-
-const resolvers = {
-  Query: { 
-    books: () => books 
-  }
-};
+const typeDefs = mergeTypes(fileLoader(path.join(__dirname, './schema')));
+const resolvers = mergeResolvers(fileLoader(path.join(__dirname, './resolvers')));
 
 // Put together a schema
 const schema = makeExecutableSchema({
@@ -41,7 +15,6 @@ const schema = makeExecutableSchema({
 });
 
 const app = express();
-connectToDB();
 
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));

@@ -1,16 +1,21 @@
 -- stock_chat database
 
-drop table users cascade if exists;
-drop table posts cascade if exists;
-drop table stocks cascade if exists;
-drop table comments cascade if exists;
-drop table likes;
+drop table if exists users cascade;
+drop table if exists posts cascade;
+drop table if exists stocks cascade;
+drop table if exists comments cascade;
+drop table if exists likes;
 
 create table users (
   id serial primary key,
-  username varchar(40),
-  email varchar(30),
+  username varchar(40) unique,
+  email varchar(30) unique,
   password varchar(30)
+);
+
+create table stocks (
+  id serial primary key,
+  symbol varchar(4) unique
 );
 
 create table posts (
@@ -18,11 +23,6 @@ create table posts (
   content text,
   stock_id integer references stocks(id),
   user_id integer references users(id)
-);
-
-create table stocks (
-  id serial primary key,
-  symbol varchar(4)
 );
 
 create table comments (

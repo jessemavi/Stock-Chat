@@ -9,11 +9,12 @@ const client = new Client({
 const connectToDB = async () => {
   try {
     await client.connect();
-    // const query = await client.query('select * from users');
     console.log('Connected to PostgreSQL stock_chat db');
   } catch(err) {
     console.log(err);
   }
 };
 
-module.exports = connectToDB;
+connectToDB();
+
+module.exports = client;
