@@ -9,15 +9,17 @@ module.exports = {
   },
 
   Mutation: {
-    createUser: async (_, data) => {
-      await db.query(`
-        insert into users (username, email, password) 
-        values ('${data.username}', '${data.email}', '${data.password}')
-      `);
-      const query = await db.query(`
-        select id, username, email, password from users order by id desc limit 1
-      `);
-      return query.rows[0];
+    createUser: async (_, args) => {
+      try {
+        await db.query(`
+          insert into users (username, email, password) 
+          values ('${args.username}', '${args.email}', '${args.password}')
+        `);
+        return true;
+      } catch(err) {
+        console.log(err);
+        return false;
+      }
     },
   }
 };

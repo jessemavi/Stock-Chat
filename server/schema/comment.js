@@ -4,5 +4,10 @@ module.exports = `
     content: String!
     post: Post!
     user: User!
+    likes: [Like!]!
+  }
+
+  type Query {
+    allComments(post_id: Int!): [Comment!]!
   }
 `;

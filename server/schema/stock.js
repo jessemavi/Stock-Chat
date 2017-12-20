@@ -3,5 +3,6 @@ module.exports = `
     id: Int!
     symbol: String!
     name: String!
+    posts: [Post!]!
   }
 `;

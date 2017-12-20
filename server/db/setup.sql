@@ -29,8 +29,8 @@ create table posts (
 create table comments (
   id serial primary key,
   content text,
-  user_id integer references users(id),
-  post_id integer references posts(id)
+  post_id integer references posts(id),
+  user_id integer references users(id)
 );
 
 create table likes (
