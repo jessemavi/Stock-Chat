@@ -4,8 +4,18 @@ module.exports = {
   Post: {
     user: async (obj) => {
       // query for user from obj user_id
-      const query = await db.query(`select * from users where id = ${obj.user_id}`)
+      const query = await db.query(`select * from users where id = ${obj.user_id}`);
       return query.rows[0];
+    },
+    comments: async (obj) => {
+      // console.log('obj', obj);
+      const query = await db.query(`select * from comments where post_id = ${obj.id}`);
+      return query.rows;
+    },
+    likes: async (obj) => {
+      // console.log('obj', obj);
+      const query = await db.query(`select * from likes where post_id = ${obj.id}`);
+      return query.rows;
     }
   },
 
@@ -22,11 +32,12 @@ module.exports = {
   Mutation: {
     createPost: async (_, args) => {
       try {
+        // escape apostrophes before inserting into db
+        const cleanedContent = args.content.replace(new RegExp("'", 'g'), "''");
         await db.query(`
           insert into posts (content, stock_id, user_id)
-          values ('${args.content}', ${args.stock_id}, ${args.user_id})
+          values ('${cleanedContent}', ${args.stock_id}, ${args.user_id})
         `);
-        const query = await db.query(`select id, content, stock_id, user_id from posts order by id desc limit 1`);
         return true;
       } catch(err) {
         console.log(err);

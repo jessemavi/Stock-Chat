@@ -10,4 +10,8 @@ module.exports = `
   type Query {
     allComments(post_id: Int!): [Comment!]!
   }
+
+  type Mutation {
+    createComment(content: String!, post_id: Int!, user_id: Int!): Boolean!
+  }
 `;

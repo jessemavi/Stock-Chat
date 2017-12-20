@@ -5,4 +5,8 @@ module.exports = `
     name: String!
     posts: [Post!]!
   }
+
+  type Query {
+    allStocks: [Stock!]!
+  }
 `;
