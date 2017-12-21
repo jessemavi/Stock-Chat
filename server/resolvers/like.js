@@ -1,9 +1,17 @@
 const db = require('../db/index');
 
 module.exports = {
+  Like: {
+    user: async (obj) => {
+      // console.log('obj', obj);
+      const query = await db.query(`select * from users where id = ${obj.user_id}`);
+      return query.rows[0];
+    }
+  },
+
   Query: {
     allLikes: async (_, args) => {
-      // console.log('args', args);
+      console.log('args', args);
       // need to see if getting likes for a post or a comment
       let type;
       let valueToQuery;
