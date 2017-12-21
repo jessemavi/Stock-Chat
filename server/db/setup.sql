@@ -36,7 +36,8 @@ create table comments (
 create table likes (
   id serial primary key,
   post_id integer references posts(id),
-  comment_id integer references comments(id)
+  comment_id integer references comments(id),
+  user_id integer references users(id)
 );
 
 insert into stocks (symbol, name) values
