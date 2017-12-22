@@ -9,9 +9,8 @@ module.exports = {
       return query.rows;
     },
     user: async (obj) => {
-      console.log('obj', obj);
+      // console.log('obj', obj);
       const query = await db.query(`select * from users where id = ${obj.user_id}`);
-      console.log('query', query.rows[0]);
       return query.rows[0];
     }
   },
@@ -32,6 +31,17 @@ module.exports = {
           insert into comments (content, post_id, user_id) 
           values ('${cleanedContent}', ${args.post_id}, ${args.user_id})
         `);
+        return true;
+      } catch(err) {
+        console.log(err);
+        return false;
+      }
+    },
+
+    removeComment: async (_, args) => {
+      try {
+        console.log('args', args);
+        await db.query(`delete from comments where id = ${args.comment_id}`);
         return true;
       } catch(err) {
         console.log(err);

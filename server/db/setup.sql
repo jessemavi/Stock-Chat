@@ -35,8 +35,8 @@ create table comments (
 
 create table likes (
   id serial primary key,
-  post_id integer references posts(id),
-  comment_id integer references comments(id),
+  post_id integer references posts(id) on delete cascade,
+  comment_id integer references comments(id) on delete cascade,
   user_id integer references users(id)
 );
 

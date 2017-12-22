@@ -47,6 +47,21 @@ module.exports = {
         console.log(err);
         return false;
       }
+    },
+
+    removeLike : async (_, args) => {
+      try {
+        console.log('args', args);
+        if(args.post_id) {
+          await db.query(`delete from likes where post_id = ${args.post_id} and user_id = ${args.user_id}`);
+        } else if(args.comment_id) {
+          await db.query(`delete from likes where comment_id = ${args.comment_id} and user_id = ${args.user_id}`);
+        }
+        return true;
+      } catch(err) {
+        console.log(err);
+        return false;
+      }
     }
   }
 };

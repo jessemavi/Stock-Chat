@@ -45,6 +45,17 @@ module.exports = {
         console.log(err);
         return false;
       }
+    },
+
+    removePost: async (_, args) => {
+      try {
+        console.log('args', args);
+        await db.query(`delete from posts where id = ${args.post_id}`);
+        return true;
+      } catch(err) {
+        console.log(err);
+        return false;
+      }
     }
   }
 };

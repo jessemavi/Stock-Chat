@@ -14,5 +14,6 @@ module.exports = `
 
   type Mutation {
     createPost(content: String!, stock_id: Int!, user_id: Int!): Boolean!
+    removePost(post_id: Int!, user_id: Int!): Boolean!
   }
 `;

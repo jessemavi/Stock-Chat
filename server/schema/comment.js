@@ -13,5 +13,6 @@ module.exports = `
 
   type Mutation {
     createComment(content: String!, post_id: Int!, user_id: Int!): Boolean!
+    removeComment(comment_id: Int!, user_id: Int!): Boolean!
   }
 `;

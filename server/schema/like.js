@@ -12,5 +12,6 @@ module.exports = `
 
   type Mutation {
     createLike(post_id: Int, comment_id: Int, user_id: Int!): Boolean!
+    removeLike(post_id: Int, comment_id: Int, user_id: Int!): Boolean!
   }
 `;
