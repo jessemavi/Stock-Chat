@@ -9,7 +9,7 @@ module.exports = `
   }
 
   type Query {
-    allPosts(stock_id: Int!): [Post!]!
+    allPosts: [Post!]!
   }
 
   type Mutation {

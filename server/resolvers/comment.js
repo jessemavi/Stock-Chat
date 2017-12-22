@@ -7,6 +7,12 @@ module.exports = {
       const query = await db.query(`select * from likes where comment_id = ${obj.id}`);
       // console.log(query.rows);
       return query.rows;
+    },
+    user: async (obj) => {
+      console.log('obj', obj);
+      const query = await db.query(`select * from users where id = ${obj.user_id}`);
+      console.log('query', query.rows[0]);
+      return query.rows[0];
     }
   },
 

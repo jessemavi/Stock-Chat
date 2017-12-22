@@ -2,6 +2,11 @@ const db = require('../db/index');
 
 module.exports = {
   Post: {
+    stock: async (obj) => {
+      // console.log('obj', obj);
+      const query = await db.query(`select * from stocks where id = ${obj.stock_id}`)
+      return query.rows[0];
+    },
     user: async (obj) => {
       // query for user from obj user_id
       const query = await db.query(`select * from users where id = ${obj.user_id}`);
@@ -20,11 +25,8 @@ module.exports = {
   },
 
   Query: {
-    allPosts: async (_, args) => {
-      const query = await db.query(`
-        select * from posts 
-        where stock_id = ${args.stock_id}
-      `);
+    allPosts: async () => {
+      const query = await db.query(`select * from posts`);
       return query.rows;
     }
   },
