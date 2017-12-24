@@ -1,4 +1,5 @@
 const db = require('../db/index');
+const bcrypt = require('bcrypt');
 
 module.exports = {
   User: {
@@ -31,9 +32,10 @@ module.exports = {
   Mutation: {
     createUser: async (_, args) => {
       try {
+        const hashedPassword = await bcrypt.hash(args.password, 12);
         await db.query(`
           insert into users (username, email, password) 
-          values ('${args.username}', '${args.email}', '${args.password}')
+          values ('${args.username}', '${args.email}', '${hashedPassword}')
         `);
         return true;
       } catch(err) {

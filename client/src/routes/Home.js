@@ -11,7 +11,7 @@ const Home = ({ data: { loading, error, allUsers } }) => {
   }
 
   return allUsers.map(user => {
-    return <h2 key={user.id}>{user.username}{user.email}</h2>
+    return <h2 key={user.id}>{user.username} <br></br> {user.email}</h2>
   })
 };
 
