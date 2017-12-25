@@ -20,7 +20,14 @@ module.exports = `
     error: String
   }
 
+  type LoginResponse {
+    userLoggedIn: Boolean!
+    token: String
+    error: String
+  }
+
   type Mutation {
     createUser(username: String!, email: String!, password: String!): SignupResponse!
+    loginUser(email: String!, password: String!): LoginResponse
   }
 `;

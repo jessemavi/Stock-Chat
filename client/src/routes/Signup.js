@@ -59,13 +59,13 @@ class Signup extends Component {
         if(response.data.createUser.error.indexOf('username') >= 0) {
           console.log('username error');
           await this.setState({
-            usernameError: response.data.createUser.error
+            usernameError: 'username already exists'
           });
         } 
         if(response.data.createUser.error.indexOf('email') >= 0) {
           console.log('email error');
           await this.setState({
-            emailError: response.data.createUser.error
+            emailError: 'email already exists'
           });
         }
       }
