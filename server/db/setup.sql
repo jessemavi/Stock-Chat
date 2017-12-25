@@ -8,28 +8,28 @@ drop table if exists likes;
 
 create table users (
   id serial primary key,
-  username varchar(40) unique not null,
-  email varchar(40) unique not null,
-  password varchar(60) not null,
+  username varchar unique not null check (length(username) >= 4),
+  email varchar unique not null check (length(email) >= 7),
+  password varchar not null,
   created_at timestamp default now()
 );
 
 create table stocks (
   id serial primary key,
-  symbol varchar(4) unique not null,
+  symbol varchar unique not null,
   name varchar unique not null
 );
 
 create table posts (
   id serial primary key,
-  content text not null,
+  content text not null check (length(content) > 0),
   stock_id integer references stocks(id),
   user_id integer references users(id)
 );
 
 create table comments (
   id serial primary key,
-  content text not null,
+  content text not null check (length(content) > 0),
   post_id integer references posts(id),
   user_id integer references users(id)
 );

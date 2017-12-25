@@ -31,6 +31,7 @@ module.exports = {
 
   Mutation: {
     createUser: async (_, args) => {
+      console.log('args', args);
       try {
         const hashedPassword = await bcrypt.hash(args.password, 12);
         await db.query(`
@@ -39,7 +40,8 @@ module.exports = {
         `);
         return true;
       } catch(err) {
-        console.log(err);
+        console.log('err', err);
+        console.log('err.detail', err.detail);
         return false;
       }
     },
