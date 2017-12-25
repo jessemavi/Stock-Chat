@@ -14,7 +14,13 @@ module.exports = `
     allUsers: [User!]!
   }
 
+  type SignupResponse {
+    userCreated: Boolean!
+    user: User
+    error: String
+  }
+
   type Mutation {
-    createUser(username: String!, email: String!, password: String!): Boolean!
+    createUser(username: String!, email: String!, password: String!): SignupResponse!
   }
 `;

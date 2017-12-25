@@ -31,18 +31,29 @@ module.exports = {
 
   Mutation: {
     createUser: async (_, args) => {
-      console.log('args', args);
+      // console.log('args', args);
       try {
         const hashedPassword = await bcrypt.hash(args.password, 12);
-        await db.query(`
+        const query = await db.query(`
           insert into users (username, email, password) 
           values ('${args.username}', '${args.email}', '${hashedPassword}')
+          returning id, username, email
         `);
-        return true;
+        console.log('query.rows', query.rows[0]);
+        return {
+          userCreated: true,
+          user: query.rows[0],
+          error: null
+        }
       } catch(err) {
         console.log('err', err);
         console.log('err.detail', err.detail);
-        return false;
+        // return false;
+        return {
+          userCreated: false,
+          user: null,
+          error: err.detail
+        }
       }
     },
   }

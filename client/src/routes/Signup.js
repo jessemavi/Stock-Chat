@@ -14,7 +14,7 @@ class Signup extends Component {
   }
 
   onSubmit = async () => {
-    this.setState({
+    await this.setState({
       usernameError: '',
       emailError: '',
       passwordError: '',
@@ -38,9 +38,9 @@ class Signup extends Component {
       });
     }
 
-    if(this.state.password.length <= 3) {
+    if(this.state.password.length <= 4) {
       await this.setState({
-        passwordError: 'password must be at least 4 characters'
+        passwordError: 'password must be at least 5 characters'
       });
     }
 
@@ -50,12 +50,24 @@ class Signup extends Component {
       const response = await this.props.mutate({
         variables: {username, email, password}
       });
-      console.log(response);
+      console.log('response', response);
 
-      if(response.data.createUser) {
+      if(response.data.createUser.userCreated) {
         this.props.history.push('/');
       } else {
         // add any errors from server to state
+        if(response.data.createUser.error.indexOf('username') >= 0) {
+          console.log('username error');
+          await this.setState({
+            usernameError: response.data.createUser.error
+          });
+        } 
+        if(response.data.createUser.error.indexOf('email') >= 0) {
+          console.log('email error');
+          await this.setState({
+            emailError: response.data.createUser.error
+          });
+        }
       }
     }
   };
@@ -88,7 +100,7 @@ class Signup extends Component {
 
     return (
       <Container text>
-      
+
         <Header as='h2'>Signup</Header>
 
         <Input
@@ -132,7 +144,15 @@ class Signup extends Component {
 
 const signupMutation = gql`
   mutation($username: String!, $email: String!, $password: String!) {
-    createUser(username: $username, email: $email, password: $password)
+    createUser(username: $username, email: $email, password: $password) {
+      userCreated
+      user {
+        id 
+        username 
+        email
+      }
+      error
+    }
 
   }
 `;
