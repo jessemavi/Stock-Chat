@@ -133,7 +133,7 @@ class Signup extends Component {
 
         {usernameError || emailError || passwordError ? <Message
           error
-          header='There was some errors with your submission'
+          header='There were some errors with your submission'
           list={errorList}
         /> : null}
 

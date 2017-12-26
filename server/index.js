@@ -6,6 +6,8 @@ const { fileLoader, mergeTypes, mergeResolvers } = require('merge-graphql-schema
 const path = require('path');
 const cors = require('cors');
 
+const secret = 'stock-chat-12**34';
+
 const typeDefs = mergeTypes(fileLoader(path.join(__dirname, './schema')));
 const resolvers = mergeResolvers(fileLoader(path.join(__dirname, './resolvers')));
 
@@ -18,7 +20,7 @@ const schema = makeExecutableSchema({
 const app = express();
 app.use(cors());
 
-app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
+app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, context: {secret} }));
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
 app.listen(4000, () => {

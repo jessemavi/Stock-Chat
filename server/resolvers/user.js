@@ -1,7 +1,9 @@
 const db = require('../db/index');
 const bcrypt = require('bcrypt');
+const login = require('../auth');
 
 module.exports = {
+  
   User: {
     posts: async (obj) => {
       // console.log('obj', obj);
@@ -55,14 +57,10 @@ module.exports = {
       }
     },
 
-    loginUser: async (_, args) => {
-      console.log('args', args);
+    loginUser: async (_, args, { secret }) => {
+      // console.log('args', args);
       try {
-        return {
-          userLoggedIn: true,
-          token: '$1234-TEST',
-          error: null
-        }
+        return login(args.email, args.password, secret);
       } catch(err) {
         return {
           userLoggedIn: false,
@@ -72,4 +70,5 @@ module.exports = {
       }
     }
   }
+
 };

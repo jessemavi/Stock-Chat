@@ -17,14 +17,42 @@ class Login extends Component {
       passwordError: '',
     });
 
-    // console.log('state', this.state);
+    if(!RegExp("^[\\w-_\.+]*[\\w-_\.]\@([\\w]+\\.)+[\\w]+[\\w]$").test(this.state.email)) {
+      this.setState({
+        emailError: 'invalid email'
+      });
+    }
 
-    const {email, password} = this.state;
-    
-    const response = await this.props.mutate({
-      variables: {email, password}
-    });
-    console.log('response', response);
+    if(this.state.password.length === 0) {
+      this.setState({
+        passwordError: 'password is required'
+      });
+    }
+
+    if(this.state.emailError.length === 0 && this.state.passwordError.length === 0) {
+      const {email, password} = this.state;
+
+      const response = await this.props.mutate({
+        variables: {email, password}
+      });
+      console.log('response', response);
+
+      if(response.data.loginUser.userLoggedIn) {
+        localStorage.setItem('token', response.data.loginUser.token);
+        this.props.history.push('/');
+      } else {
+        if(response.data.loginUser.error === 'email does not exist') {
+          this.setState({
+            emailError: 'email does not exist'
+          });
+        }
+        if(response.data.loginUser.error === 'wrong password') {
+          this.setState({
+            passwordError: 'wrong password'
+          });
+        }
+      }
+    }
   }
 
   onChange = event => {
@@ -76,7 +104,7 @@ class Login extends Component {
 
         {emailError || passwordError ? <Message
           error
-          header='There was some errors with your submission'
+          header='There were some errors with your submission'
           list={errorList}
         /> : null}
 
