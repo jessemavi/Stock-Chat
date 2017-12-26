@@ -22,16 +22,19 @@ class CreatePost extends Component {
 
     if(this.state.contentError.length === 0) {
       const {content} = this.state;
-
-      console.log(this.state);
-
       // stock_id will be separate for each stock page
       const stock_id = 1;
+      
+      let response;
+      try {
+        response = await this.props.mutate({
+          variables: {content, stock_id}
+        });
+        console.log('response', response);
+      } catch(err) {
+        this.props.history.push('/login');
+      }
 
-      const response = await this.props.mutate({
-        variables: {content, stock_id}
-      });
-      console.log('response', response);
     }
   }
 

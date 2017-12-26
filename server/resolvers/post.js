@@ -1,4 +1,5 @@
 const db = require('../db/index');
+const requiresAuth = require('../permissions');
 
 module.exports = {
   Post: {
@@ -32,7 +33,7 @@ module.exports = {
   },
 
   Mutation: {
-    createPost: async (_, args, { user }) => {
+    createPost: requiresAuth.createResolver(async (_, args, { user }) => {
       try {
         console.log('args in createPost mutation', args);
         console.log('user', user);
@@ -47,7 +48,7 @@ module.exports = {
         console.log(err);
         return false;
       }
-    },
+    }),
 
     removePost: async (_, args) => {
       try {

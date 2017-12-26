@@ -23,6 +23,7 @@ app.use(cors());
 
 // authentication middleware
 const verifyUser = async (req, res, next) => {
+  // console.log('req', req);
   console.log('req headers authorization:', req.headers.authorization);
 
   let token;
@@ -34,7 +35,7 @@ const verifyUser = async (req, res, next) => {
     try {
       // verify jwt token
       const user = jwt.verify(token, secret);
-      console.log('user', user);
+      console.log('user in verifyUser middleware', user);
       req.user = user;
 
     } catch(err) {
