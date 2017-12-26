@@ -32,13 +32,15 @@ module.exports = {
   },
 
   Mutation: {
-    createPost: async (_, args) => {
+    createPost: async (_, args, { user }) => {
       try {
+        console.log('args in createPost mutation', args);
+        console.log('user', user);
         // escape apostrophes before inserting into db
         const cleanedContent = args.content.replace(new RegExp("'", 'g'), "''");
         await db.query(`
           insert into posts (content, stock_id, user_id)
-          values ('${cleanedContent}', ${args.stock_id}, ${args.user_id})
+          values ('${cleanedContent}', ${args.stock_id}, ${user.user})
         `);
         return true;
       } catch(err) {

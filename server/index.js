@@ -5,6 +5,7 @@ const { makeExecutableSchema } = require('graphql-tools');
 const { fileLoader, mergeTypes, mergeResolvers } = require('merge-graphql-schemas');
 const path = require('path');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 
 const secret = 'stock-chat-12**34';
 
@@ -20,7 +21,43 @@ const schema = makeExecutableSchema({
 const app = express();
 app.use(cors());
 
-app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, context: {secret} }));
+// authentication middleware
+const verifyUser = async (req, res, next) => {
+  console.log('req headers authorization:', req.headers.authorization);
+
+  let token;
+  
+  if(req.headers.authorization) {
+    token = req.headers.authorization.slice(7);
+  }
+  if(token) {
+    try {
+      // verify jwt token
+      const user = jwt.verify(token, secret);
+      console.log('user', user);
+      req.user = user;
+
+    } catch(err) {
+      console.log('error in verifyUser middleware', err);
+    }
+  }
+  next()
+};
+
+app.use(verifyUser);
+
+app.use(
+  '/graphql', 
+  bodyParser.json(), 
+  graphqlExpress(req => ({ 
+    schema, 
+    context: {
+      user: req.user,
+      secret
+    } 
+  }))
+);
+
 app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
 app.listen(4000, () => {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Message, Button, Input, Container, Header } from 'semantic-ui-react';
+import { Form, Message, Button, Input, Container, Header } from 'semantic-ui-react';
 
 class Signup extends Component {
   state = {
@@ -103,31 +103,36 @@ class Signup extends Component {
 
         <Header as='h2'>Signup</Header>
 
-        <Input
-          error={usernameError.length > 0} 
-          name='username' 
-          onChange={this.onChange} 
-          value={username} 
-          placeholder='Username' 
-          fluid 
-        />
-        <Input 
-          error={emailError.length > 0}
-          name='email' 
-          onChange={this.onChange} 
-          value={email} 
-          placeholder='Email' 
-          fluid 
-        />
-        <Input 
-          error={passwordError.length > 0}
-          name='password' 
-          onChange={this.onChange} 
-          value={password} 
-          placeholder='Password' 
-          type='password' 
-          fluid 
-        />
+        <Form>
+          <Form.Field error={usernameError.length > 0}>
+            <Input 
+              name='username' 
+              onChange={this.onChange} 
+              value={username} 
+              placeholder='Username' 
+              fluid 
+            />
+          </Form.Field>
+          <Form.Field error={emailError.length > 0}>
+            <Input 
+              name='email' 
+              onChange={this.onChange} 
+              value={email} 
+              placeholder='Email' 
+              fluid 
+            />
+          </Form.Field>
+          <Form.Field error={passwordError.length > 0}>
+            <Input
+              name='password' 
+              onChange={this.onChange} 
+              value={password} 
+              placeholder='Password' 
+              type='password' 
+              fluid 
+            />
+          </Form.Field>
+        </Form>
 
         <Button onClick={this.onSubmit}>Submit</Button>
 
