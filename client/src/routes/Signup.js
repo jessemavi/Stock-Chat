@@ -53,7 +53,8 @@ class Signup extends Component {
       console.log('response', response);
 
       if(response.data.createUser.userCreated) {
-        this.props.history.push('/');
+        localStorage.setItem('token', response.data.createUser.token);
+        this.props.history.push('/all-users');
       } else {
         // add any errors from server to state
         if(response.data.createUser.error.indexOf('username') >= 0) {
@@ -151,11 +152,7 @@ const signupMutation = gql`
   mutation($username: String!, $email: String!, $password: String!) {
     createUser(username: $username, email: $email, password: $password) {
       userCreated
-      user {
-        id 
-        username 
-        email
-      }
+      token
       error
     }
 

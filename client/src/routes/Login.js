@@ -39,7 +39,7 @@ class Login extends Component {
 
       if(response.data.loginUser.userLoggedIn) {
         localStorage.setItem('token', response.data.loginUser.token);
-        this.props.history.push('/');
+        this.props.history.push('/all-users');
       } else {
         if(response.data.loginUser.error === 'email does not exist') {
           this.setState({

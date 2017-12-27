@@ -16,7 +16,7 @@ module.exports = `
 
   type SignupResponse {
     userCreated: Boolean!
-    user: User
+    token: String
     error: String
   }
 

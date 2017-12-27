@@ -2,6 +2,38 @@ const db = require('./db/index');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+const signUp = async (username, email, password, secret) => {
+  try {
+    // hash password
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    // insert into db
+    const query = await db.query(`
+      insert into users (username, email, password) 
+      values ('${username}', '${email}', '${hashedPassword}')
+      returning id, username, email
+    `);
+    // console.log('query', query);
+    // console.log('query.rows', query.rows[0]);
+    const user = query.rows[0];
+
+    // create jwt to send back in response
+    const token = await jwt.sign({user: user.id}, secret, {expiresIn: '2hr'});
+
+    return {
+      userCreated: true,
+      token: token,
+    }
+  } catch(err) {
+    console.log('err', err);
+    console.log('err.detail', err.detail);
+    return {
+      userCreated: false,
+      error: err.detail
+    }
+  }
+}
+
 const login = async (email, password, secret) => {
   // find user in db
   const query = await db.query(`select * from users where email = '${email}'`);
@@ -26,7 +58,7 @@ const login = async (email, password, secret) => {
   }
 
   // create jwt to send back in response
-  const token = await jwt.sign({user: user.id}, secret, {expiresIn: '4hr'});
+  const token = await jwt.sign({user: user.id}, secret, {expiresIn: '2hr'});
 
   return {
     userLoggedIn: true,
@@ -34,4 +66,7 @@ const login = async (email, password, secret) => {
   }
 };
 
-module.exports = login;
+module.exports = {
+  signUp: signUp, 
+  login: login
+};

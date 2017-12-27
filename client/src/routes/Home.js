@@ -1,28 +1,16 @@
-import React from 'react';
-import { graphql } from 'react-apollo';
-import gql from 'graphql-tag';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
-const Home = ({ data: { loading, error, allUsers } }) => {
-  if(loading) {
-    return <p>Loading</p>
+class Home extends Component {
+  render() {
+    return (
+      <div>
+        <Link to="/signup">Sign Up</Link>
+        <br></br>
+        <Link to="/login">Login</Link>
+      </div>
+    )
   }
-  if(error) {
-    return <p>Error</p>
-  }
+}
 
-  return allUsers.map(user => {
-    return <h2 key={user.id}>{user.username} <br></br> {user.email}</h2>
-  })
-};
-
-const allUsersQuery = gql`
-  {
-    allUsers {
-      id
-      username
-      email
-    }
-  }
-`;
-
-export default graphql(allUsersQuery)(Home);
+export default Home;

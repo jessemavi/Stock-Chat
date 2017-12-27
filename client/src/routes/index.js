@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import decode from 'jwt-decode';
 
 import Home from './Home';
+import AllUsers from './AllUsers';
 import Signup from './Signup';
 import Login from './Login';
 import CreatePost from './CreatePost';
@@ -32,9 +33,10 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
 export default () => (
   <BrowserRouter>
     <Switch>
+      <Route path='/' exact component={Home} />
       <Route path='/signup' exact component={Signup} />
       <Route path='/login' exact component={Login} />
-      <PrivateRoute path='/' exact component={Home} />
+      <PrivateRoute path='/all-users' exact component={AllUsers} />
       <PrivateRoute path='/create-post' exact component={CreatePost} />
     </Switch>
   </BrowserRouter>
