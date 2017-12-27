@@ -3,6 +3,8 @@ import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Form, Message, Button, Input, Container, Header } from 'semantic-ui-react';
 
+import LoggedInHeader from '../LoggedInHeader';
+
 class CreatePost extends Component {
   state = {
     content: '',
@@ -24,7 +26,7 @@ class CreatePost extends Component {
       const {content} = this.state;
       // stock_id will be separate for each stock page
       const stock_id = 1;
-      
+
       let response;
       try {
         response = await this.props.mutate({
@@ -58,6 +60,8 @@ class CreatePost extends Component {
 
     return (
       <Container text>
+
+        <LoggedInHeader />
 
         <Header as='h2'>Create Post</Header>
 
