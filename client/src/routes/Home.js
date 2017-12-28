@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { Header } from 'semantic-ui-react';
 
 class Home extends Component {
@@ -7,8 +6,8 @@ class Home extends Component {
     return (
       <div>
         <Header>
-          <Link to="/signup">Sign Up </Link>
-          <Link to="/login">Login</Link>
+          <a href='/signup'>Sign Up</a>
+          <a href='/login'>Login</a>
         </Header>
       </div>
     )

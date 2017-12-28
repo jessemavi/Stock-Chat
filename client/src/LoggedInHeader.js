@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 
 class LoggedInHeader extends Component {
   onClick = () => {
@@ -8,7 +7,7 @@ class LoggedInHeader extends Component {
 
   render() {
     return (
-      <Link onClick={this.onClick} to="/login">Sign Out</Link>
+      <a onClick={this.onClick} href='/login'>Sign Out</a>
     )
   }
 };

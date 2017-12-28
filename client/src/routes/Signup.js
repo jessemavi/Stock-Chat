@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Form, Message, Button, Input, Container, Header } from 'semantic-ui-react';
+import { Button, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react';
 
 class Signup extends Component {
   state = {
@@ -100,50 +100,75 @@ class Signup extends Component {
     } 
 
     return (
-      <Container text>
+      <div className='login-form'>
+        {/*
+          Heads up! The styles below are necessary for the correct render of this example.
+          You can do same with CSS, the main idea is that all the elements up to the `Grid`
+          below must have a height of 100%.
+        */}
+        <style>{`
+          body > div,
+          body > div > div,
+          body > div > div > div.login-form {
+            height: 100%;
+          }
+        `}</style>
+        <Grid
+          textAlign='center'
+          style={{ height: '100%' }}
+          verticalAlign='middle'
+        >
+          <Grid.Column style={{ maxWidth: 450 }}>
+            <Header as='h2' color='green' textAlign='center'>
+              {' '}Sign up for Stock-Chat
+            </Header>
+            <Form size='large'>
+              <Segment stacked>
+                <Form.Input 
+                  fluid
+                  icon='user'
+                  iconPosition='left'
+                  placeholder='Username'
+                  name='username'
+                  onChange={this.onChange} 
+                  value={username}
+                  error={usernameError.length > 0}
+                />
+                <Form.Input
+                  fluid
+                  icon='mail'
+                  iconPosition='left'
+                  placeholder='E-mail address'
+                  name='email' 
+                  onChange={this.onChange} 
+                  value={email} 
+                  error={emailError.length > 0}
+                />
+                <Form.Input
+                  fluid
+                  icon='lock'
+                  iconPosition='left'
+                  placeholder='Password'
+                  type='password'
+                  name='password' 
+                  onChange={this.onChange} 
+                  value={password} 
+                  error={passwordError.length > 0}
+                />
 
-        <Header as='h2'>Signup</Header>
-
-        <Form>
-          <Form.Field error={usernameError.length > 0}>
-            <Input 
-              name='username' 
-              onChange={this.onChange} 
-              value={username} 
-              placeholder='Username' 
-              fluid 
-            />
-          </Form.Field>
-          <Form.Field error={emailError.length > 0}>
-            <Input 
-              name='email' 
-              onChange={this.onChange} 
-              value={email} 
-              placeholder='Email' 
-              fluid 
-            />
-          </Form.Field>
-          <Form.Field error={passwordError.length > 0}>
-            <Input
-              name='password' 
-              onChange={this.onChange} 
-              value={password} 
-              placeholder='Password' 
-              type='password' 
-              fluid 
-            />
-          </Form.Field>
-        </Form>
-
-        <Button onClick={this.onSubmit}>Submit</Button>
-
-        {usernameError || emailError || passwordError ? <Message
-          error
-          header='There were some errors with your submission'
-          list={errorList}
-        /> : null}
-
-      </Container>
+                <Button onClick={this.onSubmit} color='green' fluid size='large'>Sign Up</Button>
+              </Segment>
+            </Form>
+            <Message>
+              Already have an account? <a href='/login'>Login</a>
+            </Message>
+            {emailError || passwordError ? <Message
+              error
+              list={errorList}
+            /> : null}
+          </Grid.Column>
+        </Grid>
+      </div>
     )
   }
 }
