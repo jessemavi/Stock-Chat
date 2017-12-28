@@ -1,5 +1,4 @@
 const db = require('../db/index');
-const bcrypt = require('bcrypt');
 const auth = require('../auth');
 
 module.exports = {
@@ -33,12 +32,12 @@ module.exports = {
 
   Mutation: {
     createUser: async (_, args, { secret }) => {
-      console.log('args in createUser mutation', args);
+      // console.log('args in createUser mutation', args);
       return auth.signUp(args.username, args.email, args.password, secret);
     },
 
     loginUser: async (_, args, { secret }) => {
-      // console.log('args', args);
+      // console.log('args in loginUser mutation', args);
       return auth.login(args.email, args.password, secret);
     }
   }

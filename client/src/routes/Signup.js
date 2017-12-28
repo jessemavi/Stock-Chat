@@ -54,7 +54,7 @@ class Signup extends Component {
 
       if(response.data.createUser.userCreated) {
         localStorage.setItem('token', response.data.createUser.token);
-        this.props.history.push('/all-users');
+        this.props.history.push('/main');
       } else {
         // add any errors from server to state
         if(response.data.createUser.error.indexOf('username') >= 0) {

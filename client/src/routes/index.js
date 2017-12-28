@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import decode from 'jwt-decode';
 
 import Home from './Home';
+import Main from './Main';
 import AllUsers from './AllUsers';
 import Signup from './Signup';
 import Login from './Login';
@@ -36,6 +37,7 @@ export default () => (
       <Route path='/' exact component={Home} />
       <Route path='/signup' exact component={Signup} />
       <Route path='/login' exact component={Login} />
+      <PrivateRoute path='/main' exact component={Main} />
       <PrivateRoute path='/all-users' exact component={AllUsers} />
       <PrivateRoute path='/create-post' exact component={CreatePost} />
     </Switch>

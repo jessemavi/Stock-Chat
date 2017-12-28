@@ -15,7 +15,6 @@ const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
   const token = localStorage.getItem('token');
   // return the headers to the context so httpLink can read them
-  console.log('authLink header middleware on client');
   return {
     headers: {
       ...headers,

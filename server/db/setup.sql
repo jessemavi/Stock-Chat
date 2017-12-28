@@ -11,7 +11,7 @@ create table users (
   username varchar unique not null check (length(username) >= 4),
   email varchar unique not null check (length(email) >= 7),
   password varchar not null,
-  created_at timestamp default now()
+  created_at timestamp default now() not null
 );
 
 create table stocks (
@@ -23,22 +23,25 @@ create table stocks (
 create table posts (
   id serial primary key,
   content text not null check (length(content) > 0),
-  stock_id integer references stocks(id),
-  user_id integer references users(id)
+  stock_id integer references stocks(id) not null,
+  user_id integer references users(id) not null
+  created_at timestamp default now() not null
 );
 
 create table comments (
   id serial primary key,
   content text not null check (length(content) > 0),
-  post_id integer references posts(id),
-  user_id integer references users(id)
+  post_id integer references posts(id) not null,
+  user_id integer references users(id) not null
+  created_at timestamp default now() not null
 );
 
 create table likes (
   id serial primary key,
   post_id integer references posts(id) on delete cascade,
   comment_id integer references comments(id) on delete cascade,
-  user_id integer references users(id)
+  user_id integer references users(id) not null,
+  created_at timestamp default now() not null
 );
 
 insert into stocks (symbol, name) values
