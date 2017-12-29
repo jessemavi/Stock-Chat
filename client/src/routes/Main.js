@@ -70,7 +70,7 @@ class Main extends Component {
               onChange={this.handleChange}
               onSearchChange={this.handleSearchChange}
               options={stateOptions}
-              placeholder='Search for a company by name and click it'
+              placeholder='Search for a company by name and select it'
               search
               selection
               value={value}

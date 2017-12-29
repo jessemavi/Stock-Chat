@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { graphql, compose } from 'react-apollo';
+import { graphql} from 'react-apollo';
 import gql from 'graphql-tag';
 import { Card, Icon } from 'semantic-ui-react';
+
+import LoggedInHeader from '../LoggedInHeader';
 
 // allPosts query
   // content
@@ -22,38 +24,65 @@ import { Card, Icon } from 'semantic-ui-react';
 class Posts extends Component {
   constructor() {
     super();
-
     this.allPostsForStock = null;
+    this.state = {
+      stockData: {}
+    }
   }
 
-  componentWillReceiveProps = async(props) => {
+  // componentDidMount = async () => {
+  //   const response = await(fetch('https://api.iextrading.com/1.0/stock/mmm/quote'));
+  //   const jsonResponse = await response.json();
+  //   console.log('json quoteData', jsonResponse);
+  //   await this.setState({
+  //     stockData: jsonResponse
+  //   });
+  //   console.log('this.state', this.state);
+  // }
+
+  componentWillReceiveProps = (props) => {
     console.log('props', props);
 
-    if(props.allPostsForStockQuery && props.allPostsForStockQuery.allPostsForStock) {
-      this.allPostsForStock = props.allPostsForStockQuery.allPostsForStock.slice(0).reverse();
+    if(props.data && props.data.allPostsForStock) {
+      this.allPostsForStock = props.data.allPostsForStock.slice(0).reverse();
       console.log(this.allPostsForStock);
     }
+  }
+
+  onPostSubmit = () => {
+    console.log('post clicked');
   }
 
   render() {
     return (
       <div>
+        <LoggedInHeader />
+
+        {this.state.stockData.length !== null ?
+            <Card
+              centered={true}
+              header={this.state.stockData.latestPrice}
+              color='green'
+            />
+        : null}
+
         {this.allPostsForStock ? this.allPostsForStock.map((post, index) => {
           return (
             <Card
               className='card'
               centered={true}
               key={index}
+              onClick={this.onPostSubmit}
             >
               <Card.Content>
                 <Card.Header>{post.user.username}</Card.Header>
                 <Card.Description>{post.content}</Card.Description>
               </Card.Content>
               <Card.Content extra>
-                  <Icon name='like' />
-                  {post.likes.length} likes
-                  <Icon name='comment' />
-                  {post.comments.length} comments
+                <Icon name='like' />
+                {post.likes.length} likes
+                <Icon name='comment' />
+                {post.comments.length} comments
               </Card.Content>
             </Card>
           )
@@ -84,6 +113,4 @@ const allPostsForStockQuery = gql`
   }
 `;
 
-export default compose(
-  graphql(allPostsForStockQuery, {name: 'allPostsForStockQuery'})
-)(Posts);
+export default graphql(allPostsForStockQuery)(Posts);
