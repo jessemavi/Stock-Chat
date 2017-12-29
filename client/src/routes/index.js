@@ -8,6 +8,7 @@ import AllUsers from './AllUsers';
 import Signup from './Signup';
 import Login from './Login';
 import CreatePost from './CreatePost';
+import Posts from './Posts';
 
 const isAuthenticated = () => {
   try {
@@ -38,6 +39,7 @@ export default () => (
       <Route path='/signup' exact component={Signup} />
       <Route path='/login' exact component={Login} />
       <PrivateRoute path='/main' exact component={Main} />
+      <PrivateRoute path='/posts' exact component={Posts} />
       <PrivateRoute path='/all-users' exact component={AllUsers} />
       <PrivateRoute path='/create-post' exact component={CreatePost} />
     </Switch>

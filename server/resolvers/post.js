@@ -29,7 +29,11 @@ module.exports = {
     allPosts: async () => {
       const query = await db.query(`select * from posts`);
       return query.rows;
-    }
+    },
+    allPostsForStock: async (_, args) => {
+      const query = await db.query(`select * from posts where stock_id = ${args.stock_id}`);
+      return query.rows;
+    } 
   },
 
   Mutation: {

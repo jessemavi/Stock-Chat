@@ -1,7 +1,8 @@
 import React, { Component} from 'react';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Dropdown, Card, Button, Container } from 'semantic-ui-react'
+import { Dropdown, Card, Button, Container, Icon } from 'semantic-ui-react'
+import './Main.css';
 
 import LoggedInHeader from '../LoggedInHeader';
 
@@ -60,37 +61,43 @@ class Main extends Component {
       allPosts = this.props.allPostsQuery.allPosts.slice(0, 10).reverse();
     }
 
-
     return (
       <div>
         <LoggedInHeader />
-        <Container textAlign='center'>
-          <Dropdown
-            onChange={this.handleChange}
-            onSearchChange={this.handleSearchChange}
-            options={stateOptions}
-            placeholder='Search for a company by name'
-            search
-            selection
-            value={value}
-          />
-          <Button onClick={this.onSubmit}>Go</Button>
-        </Container>
+        <div className='search-container'>
+          <Container textAlign='center'>
+            <Dropdown
+              onChange={this.handleChange}
+              onSearchChange={this.handleSearchChange}
+              options={stateOptions}
+              placeholder='Search for a company by name and click it'
+              search
+              selection
+              value={value}
+            />
+            <Button onClick={this.onSubmit}>Go</Button>
+          </Container>
+        </div>
 
         {allPosts ? allPosts.map((post, index) => {
           return (
             <Card
+              className='card'
               centered={true}
               key={index}
               onClick={this.onPostSubmit}
             >
               <Card.Content>
-                <Card.Header>{post.stock.name}</Card.Header>
+                <Card.Header>{post.user.username}</Card.Header>
+                <Card.Meta>{post.stock.name}</Card.Meta>
                 <Card.Meta>{post.stock.symbol}</Card.Meta>
                 <Card.Description>{post.content}</Card.Description>
               </Card.Content>
               <Card.Content extra>
-                <p>{post.user.username}</p>  
+                  <Icon name='like' />
+                  {post.likes.length} likes
+                  <Icon name='comment' />
+                  {post.comments.length} comments
               </Card.Content>
             </Card>
           )
@@ -121,6 +128,12 @@ const allPostsQuery = gql`
         id
         name
         symbol
+      }
+      comments {
+        id
+      }
+      likes {
+        id
       }
     }
   }
