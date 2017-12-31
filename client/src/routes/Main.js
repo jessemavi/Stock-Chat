@@ -14,6 +14,7 @@ import LoggedInHeader from '../LoggedInHeader';
   // date
 
 class Main extends Component {
+
   state = { 
     
   }
@@ -24,12 +25,14 @@ class Main extends Component {
 
     // stock is selected here -> move to stock posts page with posts for the stock selected
     console.log('value', value);
-    // console.log('searchQuery', searchQuery);
     console.log('state after selecting a stock', this.state);
+    await localStorage.removeItem('stock_id');
+    await localStorage.setItem('stock_id', value);
+    this.props.history.push(`/posts`);
   }
 
   handleSearchChange = (e, { searchQuery }) => {
-    // console.log('handleSearchChange');
+    console.log('handleSearchChange');
     this.setState({ searchQuery })
   }
 
@@ -45,7 +48,7 @@ class Main extends Component {
   }
 
   render() {
-    console.log('props', this.props);
+    // console.log('props', this.props);
 
     const { value } = this.state
     const stateOptions = []
@@ -53,8 +56,9 @@ class Main extends Component {
 
     if(this.props.allStocksQuery && this.props.allStocksQuery.allStocks) {
       this.props.allStocksQuery.allStocks.forEach(stock => {
-        stateOptions.push({key: stock.symbol, value: stock.id, text: stock.name})
+        stateOptions.push({key: stock.symbol, value: stock.id, text: `${stock.name}(${stock.symbol})`})
       })
+      // console.log('stateOptions', stateOptions);
     }
 
     if(this.props.allPostsQuery && this.props.allPostsQuery.allPosts) {
@@ -70,10 +74,11 @@ class Main extends Component {
               onChange={this.handleChange}
               onSearchChange={this.handleSearchChange}
               options={stateOptions}
-              placeholder='Search for a company by name and select it'
+              placeholder='Search for a company by name or symbol'
               search
               selection
               value={value}
+              fluid
             />
             <Button onClick={this.onSubmit}>Go</Button>
           </Container>

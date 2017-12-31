@@ -5,53 +5,50 @@ import { Card, Icon } from 'semantic-ui-react';
 
 import LoggedInHeader from '../LoggedInHeader';
 
-// allPosts query
-  // content
-  // stock
-  // user
-    // username
-  // comments (display number of comments)
-  // likes (display number of likes)
-    // user
-      // username
-
-// createPost mutation
-// removePost mutation
-// createLike mutation
-// removeLike mutation
-
-
 class Posts extends Component {
   constructor() {
     super();
-    this.allPostsForStock = null;
     this.state = {
       stockData: {}
     }
+    console.log('localStorage stock_id', localStorage.getItem('stock_id'))
   }
 
-  // componentDidMount = async () => {
-  //   const response = await(fetch('https://api.iextrading.com/1.0/stock/mmm/quote'));
-  //   const jsonResponse = await response.json();
-  //   console.log('json quoteData', jsonResponse);
-  //   await this.setState({
-  //     stockData: jsonResponse
-  //   });
-  //   console.log('this.state', this.state);
-  // }
+  componentDidMount = async () => {
+    console.log('props in componentDidMount', this.props);
+    if(this.props.data.allPostsForStock) {
+      // **refetch working but not using passed in arguments and is using old arguments
+      // fix: reload the page when component is rendered
+      // await this.props.data.refetch( {stock_id: JSON.parse(localStorage.getItem('stock_id'))} );
+      window.location.reload();
+      // console.log( 'refetch result', await this.props.data.refetch( {stock_id: JSON.parse(localStorage.getItem('stock_id'))} ) )
+    }
+    await this.setState({
+      stock_id: JSON.parse(localStorage.getItem('stock_id'))
+    })
+    const response = await(fetch('https://api.iextrading.com/1.0/stock/mmm/quote'));
+    const jsonResponse = await response.json();
+    console.log('json quoteData', jsonResponse);
+    await this.setState({
+      stockData: jsonResponse
+    });
+    // console.log('this.state', this.state);
+  }
 
-  componentWillReceiveProps = (props) => {
-    console.log('props', props);
+  componentWillReceiveProps = async (props) => {
+    console.log('props in componentWillReceiveProps', props);
 
     if(props.data && props.data.allPostsForStock) {
       this.allPostsForStock = props.data.allPostsForStock.slice(0).reverse();
-      console.log(this.allPostsForStock);
+      console.log('allPostsForStock', this.allPostsForStock);
     }
+    // allPostsForStockQuery(this.props.match.params.stock_id);
   }
 
   onPostSubmit = () => {
     console.log('post clicked');
   }
+
 
   render() {
     return (
@@ -94,7 +91,7 @@ class Posts extends Component {
 
 const allPostsForStockQuery = gql`
   {
-    allPostsForStock(stock_id: 1) {
+    allPostsForStock(stock_id: ${JSON.parse(localStorage.getItem('stock_id'))}) {
       content
       user {
         username

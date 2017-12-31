@@ -49,6 +49,7 @@ class CreatePost extends Component {
   };
 
   render() {
+    console.log('props', this.props);
 
     const {content, contentError} = this.state;
 

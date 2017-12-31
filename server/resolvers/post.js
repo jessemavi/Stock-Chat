@@ -31,6 +31,7 @@ module.exports = {
       return query.rows;
     },
     allPostsForStock: async (_, args) => {
+      console.log('args in allPostsForStock', args);
       const query = await db.query(`select * from posts where stock_id = ${args.stock_id}`);
       return query.rows;
     } 

@@ -8,5 +8,6 @@ module.exports = `
 
   type Query {
     allStocks: [Stock!]!
+    stock(stock_id: Int!): Stock!
   }
 `;

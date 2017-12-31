@@ -18,7 +18,7 @@ const signUp = async (username, email, password, secret) => {
     const user = query.rows[0];
 
     // create jwt to send back in response
-    const token = await jwt.sign({user: user.id}, secret, {expiresIn: '4hr'});
+    const token = await jwt.sign({user: user.id}, secret, {expiresIn: '6hr'});
 
     return {
       userCreated: true,
@@ -58,7 +58,7 @@ const login = async (email, password, secret) => {
   }
 
   // create jwt to send back in response
-  const token = await jwt.sign({user: user.id}, secret, {expiresIn: '4hr'});
+  const token = await jwt.sign({user: user.id}, secret, {expiresIn: '6hr'});
 
   return {
     userLoggedIn: true,
