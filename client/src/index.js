@@ -28,6 +28,8 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
+export default client;
+
 const App = (
   <ApolloProvider client={client} >
     <Routes />

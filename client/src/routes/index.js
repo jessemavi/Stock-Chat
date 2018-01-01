@@ -40,7 +40,7 @@ export default () => (
       <Route path='/signup' exact component={Signup} />
       <Route path='/login' exact component={Login} />
       <PrivateRoute path='/main' exact component={Main} />
-      <PrivateRoute exact path='/posts' component={Posts} />
+      <PrivateRoute path='/posts/:stock_id' exact component={Posts} />
       <PrivateRoute path='/post' exact component={Post} />
       <PrivateRoute path='/all-users' exact component={AllUsers} />
       <PrivateRoute path='/create-post' exact component={CreatePost} />

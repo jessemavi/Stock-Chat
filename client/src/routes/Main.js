@@ -6,13 +6,6 @@ import './Main.css';
 
 import LoggedInHeader from '../LoggedInHeader';
 
-// search bar with stocks as options
-// display 10 most recent messages
-  // username
-  // content
-  // number of likes
-  // date
-
 class Main extends Component {
 
   state = { 
@@ -25,10 +18,10 @@ class Main extends Component {
 
     // stock is selected here -> move to stock posts page with posts for the stock selected
     console.log('value', value);
-    console.log('state after selecting a stock', this.state);
-    await localStorage.removeItem('stock_id');
-    await localStorage.setItem('stock_id', value);
-    this.props.history.push(`/posts`);
+    // console.log('state after selecting a stock', this.state);
+    // await localStorage.removeItem('stock_id');
+    // await localStorage.setItem('stock_id', value);
+    this.props.history.push(`/posts/${value}`);
   }
 
   handleSearchChange = (e, { searchQuery }) => {
@@ -107,6 +100,7 @@ class Main extends Component {
             </Card>
           )
         }) : null}
+
       </div>
     )
   }

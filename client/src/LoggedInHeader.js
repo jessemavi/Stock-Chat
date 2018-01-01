@@ -14,7 +14,7 @@ class LoggedInHeader extends Component {
             <Menu.Item>Stock Chat</Menu.Item>
           </Menu.Menu>
           <Menu.Menu position='right'>
-            <Menu.Item>
+            <Menu.Item fitted='vertically'>
               <Popup wide trigger={<Button content='Username' color='green' />} on='click'>
                   <Grid divided columns='equal'>
                     <Button content='Profile' basic color='green' fluid />
