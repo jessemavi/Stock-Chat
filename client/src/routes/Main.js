@@ -12,27 +12,12 @@ class Main extends Component {
     
   }
 
-  handleChange = async (e, { value }) => {
+  onChange = async (event, { value }) => {
     console.log('handleChange');
     await this.setState({ value })
-
     // stock is selected here -> move to stock posts page with posts for the stock selected
     console.log('value', value);
-    // console.log('state after selecting a stock', this.state);
-    // await localStorage.removeItem('stock_id');
-    // await localStorage.setItem('stock_id', value);
     this.props.history.push(`/posts/${value}`);
-  }
-
-  handleSearchChange = (e, { searchQuery }) => {
-    console.log('handleSearchChange');
-    this.setState({ searchQuery })
-  }
-
-  onSubmit = async () => {
-    if(this.state.value) {
-      this.props.history.push('/create-post');
-    }
   }
 
   onPostClick = async (post_id) => {
@@ -49,10 +34,10 @@ class Main extends Component {
     let allPosts;
 
     if(this.props.allStocksQuery && this.props.allStocksQuery.allStocks) {
-      this.props.allStocksQuery.allStocks.forEach(stock => {
-        stateOptions.push({key: stock.symbol, value: stock.id, text: `${stock.name}(${stock.symbol})`})
+      this.props.allStocksQuery.allStocks.forEach((stock, index) => {
+        stateOptions.push({key: index, value: stock.id, text: `${stock.name}(${stock.symbol})`})
       })
-      // console.log('stateOptions', stateOptions);
+      console.log('stateOptions', stateOptions);
     }
 
     if(this.props.allPostsQuery && this.props.allPostsQuery.allPosts) {
@@ -66,16 +51,16 @@ class Main extends Component {
         <div className='search-container'>
           <Container textAlign='center'>
             <Dropdown
-              onChange={this.handleChange}
-              onSearchChange={this.handleSearchChange}
-              options={stateOptions}
               placeholder='Search for a company by name or symbol'
+              fluid
               search
               selection
+              selectOnBlur={false}
+              selectOnNavigation={false}
+              options={stateOptions}
               value={value}
-              fluid
+              onChange={this.onChange}
             />
-            <Button onClick={this.onSubmit}>Go</Button>
           </Container>
         </div>
 
