@@ -1,7 +1,7 @@
 import React, { Component} from 'react';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Dropdown, Card, Button, Container, Icon } from 'semantic-ui-react'
+import { Dropdown, Card, Container, Icon } from 'semantic-ui-react'
 import './Main.css';
 
 import LoggedInHeader from '../LoggedInHeader';
@@ -35,9 +35,9 @@ class Main extends Component {
 
     if(this.props.allStocksQuery && this.props.allStocksQuery.allStocks) {
       this.props.allStocksQuery.allStocks.forEach((stock, index) => {
-        stateOptions.push({key: index, value: stock.id, text: `${stock.name}(${stock.symbol})`})
+        stateOptions.push({key: index, value: stock.id, text: `${stock.name} (${stock.symbol})`})
       })
-      console.log('stateOptions', stateOptions);
+      // console.log('stateOptions', stateOptions);
     }
 
     if(this.props.allPostsQuery && this.props.allPostsQuery.allPosts) {

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Card, Icon } from 'semantic-ui-react';
+import { Card, Icon, Form, TextArea, Button } from 'semantic-ui-react';
+import './Posts.css';
 
 import LoggedInHeader from '../LoggedInHeader';
 import client from '../index';
@@ -9,10 +11,12 @@ class Posts extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      stockData: null
+      stockData: null,
+      addPostContent: ''
     }
 
     console.log('cache in Posts constructor', client.cache.data.data);
+    console.log
 
     this.allPostsForStockQuery = gql`
       {
@@ -68,7 +72,7 @@ class Posts extends Component {
     });
     // console.log('stockPostsResponse', stockPostsResponse);
     this.setState({
-      posts: stockPostsResponse.data.allPostsForStock
+      posts: stockPostsResponse.data.allPostsForStock.slice().reverse()
     });
   }
 
@@ -77,20 +81,58 @@ class Posts extends Component {
     this.props.history.push(`/post/${post_id}`);
   }
 
+  onAddPostChange = (event, { value }) => {
+    // console.log('value', value);
+    this.setState({
+      addPostContent: value
+    })
+  }
+
+  onAddPost = async (content) => {
+    try {
+      await this.props.mutate({
+        variables: { content: content, stock_id: JSON.parse(this.props.match.params.stock_id) }
+      })
+      this.setState({
+        addPostContent: ''
+      })
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
   render() {
+
     return (
       <div>
         <LoggedInHeader />
 
         {this.state.stockData!== null ?
+          <div>
             <Card centered={true} color='green'>
               <Card.Content>
-                <Card.Header>{this.state.stockData.companyName}</Card.Header>
+                <Card.Header>{`${this.state.stockData.companyName} (${this.state.stockData.symbol})`}</Card.Header>
                 <Card.Meta>{this.state.stockData.primaryExchange}</Card.Meta>
                 <Card.Header>{this.state.stockData.latestPrice}</Card.Header>
                 <Card.Meta>{this.state.stockData.changePercent + '%'}</Card.Meta>
               </Card.Content>
             </Card>
+
+            <div className='Form'>
+              <Form>
+                <TextArea placeholder={`Ask a question or share something relevant about ${this.state.stockData.companyName}`} onChange={this.onAddPostChange} value={this.state.addPostContent} style={ { minHeight: 75 } } />
+                <Button 
+                  disabled={this.state.addPostContent.length === 0}
+                  content='Add Post' 
+                  labelPosition='left' 
+                  icon='edit' 
+                  color='green' 
+                  size='tiny'
+                  onClick={this.onAddPost.bind(this, this.state.addPostContent)}
+                />
+              </Form>
+            </div>
+          </div>
         : null}
 
         {this.state.posts ? this.state.posts.map((post, index) => {
@@ -119,4 +161,10 @@ class Posts extends Component {
   }
 }
 
-export default Posts;
+const createPostMutation = gql`
+  mutation createPostMutation($content: String!, $stock_id: Int!) {
+    createPost(content: $content, stock_id: $stock_id)
+  }
+`;
+
+export default graphql(createPostMutation)(Posts);
