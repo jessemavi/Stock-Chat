@@ -41,7 +41,7 @@ export default () => (
       <Route path='/login' exact component={Login} />
       <PrivateRoute path='/main' exact component={Main} />
       <PrivateRoute path='/posts/:stock_id' exact component={Posts} />
-      <PrivateRoute path='/post' exact component={Post} />
+      <PrivateRoute path='/post/:post_id' exact component={Post} />
       <PrivateRoute path='/all-users' exact component={AllUsers} />
       <PrivateRoute path='/create-post' exact component={CreatePost} />
     </Switch>

@@ -35,9 +35,10 @@ class Main extends Component {
     }
   }
 
-  onPostSubmit = async () => {
+  onPostClick = async (post_id) => {
     // need to grab stock's id and then redirect to stock page
     console.log('onPostSubmit');
+    this.props.history.push(`/post/${post_id}`);
   }
 
   render() {
@@ -56,6 +57,7 @@ class Main extends Component {
 
     if(this.props.allPostsQuery && this.props.allPostsQuery.allPosts) {
       allPosts = this.props.allPostsQuery.allPosts.slice(0, 10).reverse();
+      console.log('allPosts', allPosts);
     }
 
     return (
@@ -83,7 +85,7 @@ class Main extends Component {
               className='card'
               centered={true}
               key={index}
-              onClick={this.onPostSubmit}
+              onClick={this.onPostClick.bind(this, post.id)}
             >
               <Card.Content>
                 <Card.Header>{post.user.username}</Card.Header>
@@ -119,6 +121,7 @@ const allStocksQuery = gql`
 const allPostsQuery = gql`
   {
     allPosts {
+      id
       user {
         username
       }

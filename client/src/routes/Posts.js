@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-// import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Card, Icon } from 'semantic-ui-react';
 
@@ -13,9 +12,12 @@ class Posts extends Component {
       stockData: null
     }
 
+    console.log('cache in Posts constructor', client.cache.data.data);
+
     this.allPostsForStockQuery = gql`
       {
         allPostsForStock(stock_id: ${JSON.parse(this.props.match.params.stock_id)}) {
+          id
           content
           user {
             username
@@ -50,30 +52,29 @@ class Posts extends Component {
     const stockQueryResponse = await client.query({
       query: this.stockQuery
     });
-    console.log('stockQueryResponse', stockQueryResponse);
+    // console.log('stockQueryResponse', stockQueryResponse);
 
     // fetching financial from external api info before posts so it will have the info when rendering
     const stockDataResponse = await(fetch(`https://api.iextrading.com/1.0/stock/${stockQueryResponse.data.stock.symbol}/quote`));
     const jsonStockDataResponse = await stockDataResponse.json();
     console.log('jsonStockDataResponse', jsonStockDataResponse);
-    await this.setState({
+    this.setState({
       stockData: jsonStockDataResponse
     });
-    console.log('state in componentDidMount', this.state);
+    // console.log('state in componentDidMount', this.state);
 
     const stockPostsResponse = await client.query({
       query: this.allPostsForStockQuery
     });
-    console.log('stockPostsResponse', stockPostsResponse);
-
-    await this.setState({
+    // console.log('stockPostsResponse', stockPostsResponse);
+    this.setState({
       posts: stockPostsResponse.data.allPostsForStock
-    })
+    });
   }
 
-  onPostSubmit = () => {
-    console.log('post clicked');
-    this.props.history.push('/post');
+  onPostClick = (post_id) => {
+    // console.log('post clicked');
+    this.props.history.push(`/post/${post_id}`);
   }
 
   render() {
@@ -98,7 +99,7 @@ class Posts extends Component {
               className='card'
               centered={true}
               key={index}
-              onClick={this.onPostSubmit}
+              onClick={this.onPostClick.bind(this, post.id)}
             >
               <Card.Content>
                 <Card.Header>{post.user.username}</Card.Header>
