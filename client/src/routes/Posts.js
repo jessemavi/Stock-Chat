@@ -128,7 +128,7 @@ class Posts extends Component {
 
             <div className='Form'>
               <Form>
-                <TextArea placeholder={`Ask a question or share something relevant about ${this.state.stockData.companyName}`} onChange={this.onAddPostChange} value={this.state.addPostContent} style={ { minHeight: 75 } } />
+                <TextArea placeholder={`Ask a question or share something relevant about ${this.state.stockData.companyName}`} onChange={this.onAddPostChange} value={this.state.addPostContent} style={ { maxHeight: 75 } } />
                 <Button 
                   disabled={this.state.addPostContent.length === 0}
                   content='Add Post' 

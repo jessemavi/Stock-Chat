@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Card, Feed, Icon } from 'semantic-ui-react';
+import { Card, Feed, Icon, Form, TextArea, Button } from 'semantic-ui-react';
 
 import LoggedInHeader from '../LoggedInHeader';
 import client from '../index';
@@ -9,14 +10,18 @@ class Post extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      stockData: null
+      comments: [],
+      stockData: null,
+      addCommentContent: ''
     }
+
+    console.log('props in Post', this.props);
 
     console.log('client', client.cache.data.data);
 
     this.postQuery = gql`
       {
-        post(post_id: ${this.props.match.params.post_id}) {
+        post(post_id: ${JSON.parse(this.props.match.params.post_id)}) {
           content
           user {
             username
@@ -61,6 +66,40 @@ class Post extends Component {
     this.setState({
       stockData: jsonStockDataResponse
     });
+
+    this.setState({
+      comments: postResponse.data.post.comments.slice()
+    });
+  }
+
+  onAddCommentChange = (event, { value }) => {
+    // console.log(value);
+    this.setState({
+      addCommentContent: value
+    });
+  }
+
+  onAddComment = async (content) => {
+    // console.log('onAddComment');
+    // console.log('content', content);
+    // console.log(JSON.parse(this.props.match.params.post_id));
+    try {
+      const response = await this.props.mutate({
+        variables: { content: content, post_id: JSON.parse(this.props.match.params.post_id) }
+      });
+      this.setState({
+        addCommentContent: ''
+      });
+      console.log('response comment', response);
+      const comments = this.state.comments;
+      comments.unshift(response.data.createComment.comment);
+      await this.setState({
+        comments: comments
+      });
+      console.log('comments in state', this.state.comments);
+    } catch(err) {
+      console.log(err);
+    }
   }
 
 
@@ -81,51 +120,87 @@ class Post extends Component {
         : null}
 
         {this.state.post ? 
-          <Card centered={true}>
-            <Card.Content>
-              <Card.Header>{this.state.post.user.username}</Card.Header>
-              <Card.Description>{this.state.post.content}</Card.Description>
-            </Card.Content>
-            <Card.Content extra>
-              <Icon name='like' />
-              {this.state.post.likes.length} likes
-              <Icon name='comment' />
-              {this.state.post.comments.length} comments
-            </Card.Content>
-
-            {this.state.post.comments.length > 0 ?
+          <div>
+            <Card centered={true}>
               <Card.Content>
-                <Feed>
-                  {this.state.post.comments.map((comment, index) => {
-                    return (
-                      <Feed.Event key={index}>
-                        <Feed.Content>
-                          <Feed.Summary>
-                            {comment.user.username}
-                            <Feed.Date>4 days ago</Feed.Date>
-                          </Feed.Summary>
-                          <Feed.Extra text>
-                            {comment.content}
-                          </Feed.Extra>
-                          <Feed.Meta>
-                            <Feed.Like>
-                              <Icon name='like' />
-                              {comment.likes.length} Likes
-                            </Feed.Like>
-                          </Feed.Meta>
-                        </Feed.Content>
-                      </Feed.Event>
-                    )
-                  })}
-                </Feed>
+                <Card.Header>{this.state.post.user.username}</Card.Header>
+                <Card.Description>{this.state.post.content}</Card.Description>
               </Card.Content>
-            : null}
-          </Card>
+              <Card.Content extra>
+                <Icon name='like' />
+                {this.state.post.likes.length} likes
+                <Icon name='comment' />
+                {this.state.post.comments.length} comments
+              </Card.Content>
+
+              {this.state.comments.length > 0 ?
+                <Card.Content>
+                  <Feed>
+                    {this.state.comments.map((comment, index) => {
+                      return (
+                        <Feed.Event key={index}>
+                          <Feed.Content>
+                            <Feed.Summary>
+                              {comment.user.username}
+                              <Feed.Date>4 days ago</Feed.Date>
+                            </Feed.Summary>
+                            <Feed.Extra text>
+                              {comment.content}
+                            </Feed.Extra>
+                            <Feed.Meta>
+                              <Feed.Like>
+                                <Icon name='like' />
+                                {comment.likes.length} Likes
+                              </Feed.Like>
+                            </Feed.Meta>
+                          </Feed.Content>
+                        </Feed.Event>
+                      )
+                    })}
+                  </Feed>
+                </Card.Content>
+              : null}
+            </Card>
+            <div className='Form'>
+              <Form>
+                <TextArea placeholder='Add a comment' style={ { maxHeight: 55 } }onChange={this.onAddCommentChange} value={this.state.addCommentContent} />
+                <Button 
+                  disabled={this.state.addCommentContent.length === 0}
+                  content='Add Comment'
+                  labelPosition='left' 
+                  icon='edit' 
+                  color='green' 
+                  size='tiny'
+                  onClick={this.onAddComment.bind(this, this.state.addCommentContent)}
+                />
+              </Form>
+            </div>
+          </div>
         : null}
-        
+
       </div>
     )
   }
 };
 
-export default Post;
+const createCommentMutation = gql`
+  mutation createCommentMutation($content: String!, $post_id: Int!) {
+    createComment(content: $content, post_id: $post_id) {
+      commentCreated
+      comment {
+        content
+        user {
+          username
+        }
+        likes {
+          user {
+            username
+          }
+        }
+      }
+      error
+    }
+  }
+`;
+
+export default graphql(createCommentMutation)(Post);

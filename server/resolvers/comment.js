@@ -23,18 +23,27 @@ module.exports = {
   },
 
   Mutation: {
-    createComment: async (_, args) => {
+    createComment: async (_, args, { user }) => {
+      console.log('args in createComment', args);
       try {
         // escape apostrophes before inserting into db 
         const cleanedContent = args.content.replace(new RegExp("'", 'g'), "''");
-        await db.query(`
+        const query = await db.query(`
           insert into comments (content, post_id, user_id) 
-          values ('${cleanedContent}', ${args.post_id}, ${args.user_id})
+          values ('${cleanedContent}', ${args.post_id}, ${user.user})
+          returning *
         `);
-        return true;
+        console.log('query row', query.rows[0]);
+        return {
+          commentCreated: true,
+          comment: query.rows[0]
+        };
       } catch(err) {
         console.log(err);
-        return false;
+        return {
+          commentCreated: false,
+          error: err
+        };
       }
     },
 
