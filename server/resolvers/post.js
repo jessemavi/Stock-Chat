@@ -48,14 +48,21 @@ module.exports = {
         console.log('user', user);
         // escape apostrophes before inserting into db
         const cleanedContent = args.content.replace(new RegExp("'", 'g'), "''");
-        await db.query(`
+        const query = await db.query(`
           insert into posts (content, stock_id, user_id)
-          values ('${cleanedContent}', ${args.stock_id}, ${user.user})
+          values ('${cleanedContent}', ${args.stock_id}, ${user.user}) returning *
         `);
-        return true;
+        console.log('query row', query.rows[0]);
+        return {
+          postCreated: true,
+          post: query.rows[0]
+        };
       } catch(err) {
         console.log(err);
-        return false;
+        return {
+          postCreated: false,
+          error: err
+        };
       }
     }),
 

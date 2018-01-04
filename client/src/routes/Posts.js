@@ -11,12 +11,12 @@ class Posts extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      posts: [],
       stockData: null,
       addPostContent: ''
     }
 
     console.log('cache in Posts constructor', client.cache.data.data);
-    console.log
 
     this.allPostsForStockQuery = gql`
       {
@@ -70,7 +70,7 @@ class Posts extends Component {
     const stockPostsResponse = await client.query({
       query: this.allPostsForStockQuery
     });
-    // console.log('stockPostsResponse', stockPostsResponse);
+    console.log('stockPostsResponse', stockPostsResponse);
     this.setState({
       posts: stockPostsResponse.data.allPostsForStock.slice().reverse()
     });
@@ -89,13 +89,21 @@ class Posts extends Component {
   }
 
   onAddPost = async (content) => {
+    console.log();
     try {
-      await this.props.mutate({
+      const response = await this.props.mutate({
         variables: { content: content, stock_id: JSON.parse(this.props.match.params.stock_id) }
       })
       this.setState({
         addPostContent: ''
-      })
+      });
+      console.log('response', response);
+      const posts = this.state.posts;
+      posts.unshift(response.data.createPost.post)
+      await this.setState({
+        posts: posts
+      });
+      console.log('updated posts in state', this.state.posts);
     } catch(err) {
       console.log(err);
     }
@@ -135,7 +143,7 @@ class Posts extends Component {
           </div>
         : null}
 
-        {this.state.posts ? this.state.posts.map((post, index) => {
+        {this.state.posts.length > 0 ? this.state.posts.map((post, index) => {
           return (
             <Card
               className='card'
@@ -163,7 +171,27 @@ class Posts extends Component {
 
 const createPostMutation = gql`
   mutation createPostMutation($content: String!, $stock_id: Int!) {
-    createPost(content: $content, stock_id: $stock_id)
+    createPost(content: $content, stock_id: $stock_id) {
+      postCreated
+      post {
+        id
+        content
+        user {
+          username
+        }
+        likes {
+          user {
+            id
+          }
+        }
+        comments {
+          user {
+            id
+          }
+        }
+      }
+      error
+    }
   }
 `;
 

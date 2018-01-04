@@ -14,8 +14,14 @@ module.exports = `
     post(post_id: Int!) : Post!
   }
 
+  type CreatePostResponse {
+    postCreated: Boolean!
+    post: Post
+    error: String
+  }
+
   type Mutation {
-    createPost(content: String!, stock_id: Int!): Boolean!
+    createPost(content: String!, stock_id: Int!): CreatePostResponse!
     removePost(post_id: Int!, user_id: Int!): Boolean!
   }
 `;
