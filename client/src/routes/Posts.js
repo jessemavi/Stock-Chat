@@ -89,7 +89,6 @@ class Posts extends Component {
   }
 
   onAddPost = async (content) => {
-    console.log();
     try {
       const response = await this.props.mutate({
         variables: { content: content, stock_id: JSON.parse(this.props.match.params.stock_id) }

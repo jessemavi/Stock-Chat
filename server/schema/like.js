@@ -10,8 +10,15 @@ module.exports = `
     allLikes(post_id: Int, comment_id: Int): [Like!]!
   }
 
+  type CreateLikeResponse {
+    likeCreated: Boolean!
+    likeType: String
+    like: Like
+    error: String
+  }
+
   type Mutation {
-    createLike(post_id: Int, comment_id: Int, user_id: Int!): Boolean!
+    createLike(post_id: Int, comment_id: Int, user_id: Int!): CreateLikeResponse!
     removeLike(post_id: Int, comment_id: Int, user_id: Int!): Boolean!
   }
 `;

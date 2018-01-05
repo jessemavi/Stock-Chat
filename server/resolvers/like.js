@@ -6,6 +6,13 @@ module.exports = {
       // console.log('obj', obj);
       const query = await db.query(`select * from users where id = ${obj.user_id}`);
       return query.rows[0];
+    },
+    post: async (obj) => {
+      // should have post_id in obj
+      // console.log('obj', obj);
+      const query = await db.query(`select * from posts where id = ${obj.post_id}`);
+      console.log('post', query.rows[0]);
+      return query.rows[0];
     }
   },
 
@@ -31,21 +38,32 @@ module.exports = {
   Mutation: {
     createLike: async (_, args) => {
       try {
-        // console.log('args', args);
+        console.log('args', args);
         let type;
         let valueToInsert;
-        if(args.post_id) {
+        if(args.post_id && !args.comment_id) {
           type = 'post';
           valueToInsert = args.post_id;
         } else if(args.comment_id) {
           type = 'comment';
           valueToInsert = args.comment_id;
         }
-        await db.query(`insert into likes (${type}_id, user_id) values (${valueToInsert}, ${args.user_id})`);
-        return true;
+        const query = await db.query(`insert into likes (${type}_id, user_id) values (${valueToInsert}, ${args.user_id}) returning *`);
+        console.log('query row', query.rows[0]);
+        if(query.rows[0].comment_id && args.post_id) {
+          query.rows[0].post_id = args.post_id
+        }
+        return {
+          likeCreated: true,
+          likeType: type,
+          like: query.rows[0]
+        };
       } catch(err) {
         console.log(err);
-        return false;
+        return {
+          likeCreated: false,
+          error: err
+        };
       }
     },
 

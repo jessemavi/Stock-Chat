@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { graphql } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Card, Feed, Icon, Form, TextArea, Button } from 'semantic-ui-react';
 
@@ -12,7 +12,8 @@ class Post extends Component {
     this.state = {
       comments: [],
       stockData: null,
-      addCommentContent: ''
+      addCommentContent: '',
+      post: ''
     }
 
     console.log('props in Post', this.props);
@@ -31,16 +32,20 @@ class Post extends Component {
           }
           likes {
             user {
+              id
               username
             }
           }
           comments {
+            id
             content
             user {
+              id
               username
             }
             likes {
               user {
+                id
                 username
               }
             }
@@ -84,7 +89,7 @@ class Post extends Component {
     // console.log('content', content);
     // console.log(JSON.parse(this.props.match.params.post_id));
     try {
-      const response = await this.props.mutate({
+      const response = await this.props.createCommentMutation({
         variables: { content: content, post_id: JSON.parse(this.props.match.params.post_id) }
       });
       this.setState({
@@ -92,11 +97,43 @@ class Post extends Component {
       });
       console.log('response comment', response);
       const comments = this.state.comments;
-      comments.unshift(response.data.createComment.comment);
+      comments.push(response.data.createComment.comment);
       await this.setState({
         comments: comments
       });
       console.log('comments in state', this.state.comments);
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
+  onPostLikeClick = async () => {
+    // console.log('post liked');
+    try {
+      const response = await this.props.createLikeMutation({
+        variables: { post_id: JSON.parse(this.props.match.params.post_id), user_id: localStorage.getItem('user_id') }
+      });
+      console.log('response', response);
+      await this.setState({
+        post: response.data.createLike.like.post
+      });
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
+  onCommentLikeClick = async (commentID) => {
+    // console.log('comment liked');
+    // console.log('commentID', commentID);
+    try {
+      const response = await this.props.createLikeMutation({
+        variables: { comment_id: commentID, post_id: JSON.parse(this.props.match.params.post_id), user_id: localStorage.getItem('user_id') }
+      });
+      console.log('response', response);
+      await this.setState({
+        comments: response.data.createLike.like.post.comments.slice()
+      });
+      console.log('state after comment like', this.state.comments);
     } catch(err) {
       console.log(err);
     }
@@ -127,7 +164,15 @@ class Post extends Component {
                 <Card.Description>{this.state.post.content}</Card.Description>
               </Card.Content>
               <Card.Content extra>
-                <Icon name='like' />
+                <Icon 
+                  name='like' 
+                  onClick={
+                    this.state.post.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? null : this.onPostLikeClick
+                  } 
+                  color={
+                    this.state.post.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? 'red' : null
+                  }
+                />
                 {this.state.post.likes.length} likes
                 <Icon name='comment' />
                 {this.state.post.comments.length} comments
@@ -149,7 +194,15 @@ class Post extends Component {
                             </Feed.Extra>
                             <Feed.Meta>
                               <Feed.Like>
-                                <Icon name='like' />
+                                <Icon 
+                                  name='like'
+                                  onClick={
+                                    comment.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? null : this.onCommentLikeClick.bind(this, comment.id)
+                                  }
+                                  color={
+                                    comment.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? 'red' : null
+                                  }
+                                />
                                 {comment.likes.length} Likes
                               </Feed.Like>
                             </Feed.Meta>
@@ -163,7 +216,12 @@ class Post extends Component {
             </Card>
             <div className='Form'>
               <Form>
-                <TextArea placeholder='Add a comment' style={ { maxHeight: 55 } }onChange={this.onAddCommentChange} value={this.state.addCommentContent} />
+                <TextArea 
+                  placeholder='Add a comment' 
+                  style={ { maxHeight: 55 } } 
+                  value={this.state.addCommentContent} 
+                  onChange={this.onAddCommentChange}
+                />
                 <Button 
                   disabled={this.state.addCommentContent.length === 0}
                   content='Add Comment'
@@ -188,6 +246,7 @@ const createCommentMutation = gql`
     createComment(content: $content, post_id: $post_id) {
       commentCreated
       comment {
+        id
         content
         user {
           username
@@ -203,4 +262,50 @@ const createCommentMutation = gql`
   }
 `;
 
-export default graphql(createCommentMutation)(Post);
+// createLikeMutation should return the same exact ids that postQuery does to avoid throwing an error
+// https://github.com/apollographql/apollo-client/issues/2510
+
+const createLikeMutation = gql`
+  mutation createLikeMutation($post_id: Int, $comment_id: Int, $user_id: Int!) {
+    createLike(post_id: $post_id, comment_id: $comment_id, user_id: $user_id) {
+      likeCreated
+      like {
+        post {
+          content
+          user {
+            username
+          }
+          stock {
+            symbol
+          }
+          likes {
+            user {
+              id
+              username
+            }
+          }
+          comments {
+            id
+            content
+            user {
+              id
+              username
+            }
+            likes {
+              user {
+                id
+                username
+              }
+            }
+          }
+        }
+      }
+      error
+    }
+  }
+`;
+
+export default compose(
+  graphql(createCommentMutation, {name: 'createCommentMutation'}),
+  graphql(createLikeMutation, {name: 'createLikeMutation'})
+)(Post);

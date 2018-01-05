@@ -33,7 +33,7 @@ module.exports = {
           values ('${cleanedContent}', ${args.post_id}, ${user.user})
           returning *
         `);
-        console.log('query row', query.rows[0]);
+        console.log('query row in createComment', query.rows[0]);
         return {
           commentCreated: true,
           comment: query.rows[0]
