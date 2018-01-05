@@ -39,6 +39,7 @@ class Login extends Component {
 
       if(response.data.loginUser.userLoggedIn) {
         localStorage.setItem('token', response.data.loginUser.token);
+        localStorage.setItem('user_id', response.data.loginUser.user_id);
         this.props.history.push('/main');
       } else {
         if(response.data.loginUser.error === 'email does not exist') {
@@ -56,7 +57,7 @@ class Login extends Component {
   }
 
   onChange = event => {
-    console.log(event.target);
+    // console.log(event.target);
     const {name, value} = event.target;
     this.setState({
       [name]: value
@@ -146,6 +147,7 @@ const loginMutation = gql`
     loginUser(email: $email, password: $password) {
       userLoggedIn
       token
+      user_id
       error 
     }
   }

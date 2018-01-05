@@ -4,6 +4,7 @@ import { Menu, Container, Button, Grid, Popup } from 'semantic-ui-react';
 class LoggedInHeader extends Component {
   onClick = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user_id');
   }
 
   render() {

@@ -17,12 +17,14 @@ module.exports = `
   type SignupResponse {
     userCreated: Boolean!
     token: String
+    user_id: Int
     error: String
   }
 
   type LoginResponse {
     userLoggedIn: Boolean!
     token: String
+    user_id: Int
     error: String
   }
 

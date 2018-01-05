@@ -23,6 +23,7 @@ const signUp = async (username, email, password, secret) => {
     return {
       userCreated: true,
       token: token,
+      user_id: user.id
     }
   } catch(err) {
     console.log('err', err);
@@ -38,7 +39,7 @@ const login = async (email, password, secret) => {
   // find user in db
   const query = await db.query(`select * from users where email = '${email}'`);
   const user = query.rows[0];
-  // console.log('user in login function', user);
+  console.log('user in login function', user);
 
   // if email does not exist in db, return error
   if(!user) {
@@ -62,7 +63,8 @@ const login = async (email, password, secret) => {
 
   return {
     userLoggedIn: true,
-    token: token
+    token: token,
+    user_id: user.id
   }
 };
 

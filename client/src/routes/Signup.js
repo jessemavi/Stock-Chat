@@ -54,6 +54,7 @@ class Signup extends Component {
 
       if(response.data.createUser.userCreated) {
         localStorage.setItem('token', response.data.createUser.token);
+        localStorage.setItem('user_id', response.data.createUser.user_id)
         this.props.history.push('/main');
       } else {
         // add any errors from server to state
@@ -178,6 +179,7 @@ const signupMutation = gql`
     createUser(username: $username, email: $email, password: $password) {
       userCreated
       token
+      user_id
       error
     }
 
