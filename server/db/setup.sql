@@ -24,15 +24,15 @@ create table posts (
   id serial primary key,
   content text not null check (length(content) > 0),
   stock_id integer references stocks(id) not null,
-  user_id integer references users(id) not null
+  user_id integer references users(id) not null,
   created_at timestamp default now() not null
 );
 
 create table comments (
   id serial primary key,
   content text not null check (length(content) > 0),
-  post_id integer references posts(id) not null,
-  user_id integer references users(id) not null
+  post_id integer references posts(id) on delete cascade not null,
+  user_id integer references users(id) not null,
   created_at timestamp default now() not null
 );
 

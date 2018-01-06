@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Card, Feed, Icon, Form, TextArea, Button } from 'semantic-ui-react';
+import { Card, Feed, Icon, Form, TextArea, Button, Popup, Dropdown, Grid, Menu } from 'semantic-ui-react';
 
 import LoggedInHeader from '../LoggedInHeader';
 import client from '../index';
@@ -160,7 +160,14 @@ class Post extends Component {
           <div>
             <Card centered={true}>
               <Card.Content>
-                <Card.Header>{this.state.post.user.username}</Card.Header>
+                <Card.Header>
+                  {this.state.post.user.username}
+                  <Dropdown className='post-delete-icon' icon='chevron down' upward={false}>
+                    <Dropdown.Menu>
+                      <Dropdown.Item text={'Delete Post'} />
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Card.Header>
                 <Card.Description>{this.state.post.content}</Card.Description>
               </Card.Content>
               <Card.Content extra>
