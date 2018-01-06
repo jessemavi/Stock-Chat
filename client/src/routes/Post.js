@@ -25,9 +25,11 @@ class Post extends Component {
         post(post_id: ${JSON.parse(this.props.match.params.post_id)}) {
           content
           user {
+            id
             username
           }
           stock {
+            id
             symbol
           }
           likes {
@@ -139,6 +141,16 @@ class Post extends Component {
     }
   }
 
+  onDeletePost = async () => {
+    try {
+      await this.props.deletePostMutation({
+        variables: { post_id: this.props.match.params.post_id }
+      });
+      this.props.history.push(`/posts/${this.state.post.stock.id}`);
+    } catch(err) {
+      console.log(err);
+    }
+  }
 
   render() {
     return (
@@ -162,11 +174,13 @@ class Post extends Component {
               <Card.Content>
                 <Card.Header>
                   {this.state.post.user.username}
-                  <Dropdown className='post-delete-icon' icon='chevron down' upward={false}>
-                    <Dropdown.Menu>
-                      <Dropdown.Item text={'Delete Post'} />
-                    </Dropdown.Menu>
-                  </Dropdown>
+                  {this.state.post.user.id === JSON.parse(localStorage.getItem('user_id')) ?
+                    <Dropdown className='post-delete-icon' icon='chevron down' upward={false}>
+                      <Dropdown.Menu>
+                        <Dropdown.Item text={'Delete Post'} onClick={this.onDeletePost} />
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  : null}
                 </Card.Header>
                 <Card.Description>{this.state.post.content}</Card.Description>
               </Card.Content>
@@ -280,9 +294,11 @@ const createLikeMutation = gql`
         post {
           content
           user {
+            id
             username
           }
           stock {
+            id
             symbol
           }
           likes {
@@ -312,7 +328,14 @@ const createLikeMutation = gql`
   }
 `;
 
+const deletePostMutation = gql`
+  mutation deletePostMutation($post_id: Int!) {
+    deletePost(post_id: $post_id)
+  }
+`;
+
 export default compose(
   graphql(createCommentMutation, {name: 'createCommentMutation'}),
-  graphql(createLikeMutation, {name: 'createLikeMutation'})
+  graphql(createLikeMutation, {name: 'createLikeMutation'}),
+  graphql(deletePostMutation, {name: 'deletePostMutation'})
 )(Post);

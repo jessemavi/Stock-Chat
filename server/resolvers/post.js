@@ -71,10 +71,10 @@ module.exports = {
       }
     }),
 
-    removePost: async (_, args) => {
+    deletePost: async (_, args, { user }) => {
       try {
         console.log('args', args);
-        await db.query(`delete from posts where id = ${args.post_id}`);
+        await db.query(`delete from posts where id = ${args.post_id} and user_id = ${user.user}`);
         return true;
       } catch(err) {
         console.log(err);
