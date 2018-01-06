@@ -21,7 +21,8 @@ module.exports = {
 
   Query: {
     getUser: async (_, args) => {
-      const query = await db.query(`select * from users where id = ${args.id}`);
+      console.log('args in getUser', args);
+      const query = await db.query(`select * from users where id = ${args.user_id}`);
       return query.rows[0];
     },
     allUsers: async () => {

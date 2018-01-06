@@ -35,6 +35,11 @@ module.exports = {
       const query = await db.query(`select * from posts where stock_id = ${args.stock_id}`);
       return query.rows;
     },
+    allPostsForUser: async (_, args, { user }) => {
+      console.log('user in allPostsForUser query', user);
+      const query = await db.query(`select * from posts where user_id = ${user.user}`);
+      return query.rows;
+    },
     post: async (_, args) => {
       const query = await db.query(`select * from posts where id = ${args.post_id}`);
       return query.rows[0];

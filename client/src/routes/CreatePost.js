@@ -34,7 +34,7 @@ class CreatePost extends Component {
         });
         console.log('response', response);
       } catch(err) {
-        this.props.history.push('/login');
+        // this.props.history.push('/login');
       }
 
     }
@@ -49,7 +49,7 @@ class CreatePost extends Component {
   };
 
   render() {
-    console.log('props', this.props);
+    // console.log('props', this.props);
 
     const {content, contentError} = this.state;
 

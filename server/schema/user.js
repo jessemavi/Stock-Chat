@@ -10,7 +10,7 @@ module.exports = `
   }
 
   type Query {
-    getUser(id: Int!): User!
+    getUser(user_id: Int!): User!
     allUsers: [User!]!
   }
 
