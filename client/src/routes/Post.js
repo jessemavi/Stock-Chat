@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Card, Feed, Icon, Form, TextArea, Button, Popup, Dropdown, Grid, Menu } from 'semantic-ui-react';
+import { Card, Feed, Icon, Form, TextArea, Button, Dropdown } from 'semantic-ui-react';
 
 import LoggedInHeader from '../LoggedInHeader';
 import client from '../index';
@@ -154,6 +154,22 @@ class Post extends Component {
     }
   }
 
+  onDeleteComment = async (commentID) => {
+    // console.log('commentID', commentID);
+    try {
+      const response = await this.props.deleteCommentMutation({
+        variables: { comment_id: commentID, user_id: localStorage.getItem('user_id') }
+      });
+      // console.log('response from onDeleteComment', response);
+      const commentsFromResponse = response.data.deleteComment.comment.post.comments;
+      await this.setState({
+        comments: commentsFromResponse
+      });
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
   render() {
     return (
       <div>
@@ -199,7 +215,7 @@ class Post extends Component {
                 />
                 {this.state.post.likes.length} likes
                 <Icon name='comment' />
-                {this.state.post.comments.length} comments
+                {this.state.comments.length} comments
               </Card.Content>
 
               {this.state.comments.length > 0 ?
@@ -212,6 +228,13 @@ class Post extends Component {
                             <Feed.Summary>
                               {comment.user.username}
                               <Feed.Date>{comment.created_at}</Feed.Date>
+                              {comment.user.id === JSON.parse(localStorage.getItem('user_id')) ?
+                                <Dropdown className='comment-delete-icon' icon='chevron down' upward={false}>
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item text={'Delete Comment'} onClick={this.onDeleteComment.bind(this, comment.id)} />
+                                  </Dropdown.Menu>
+                                </Dropdown>
+                              : null}
                             </Feed.Summary>
                             <Feed.Extra text>
                               {comment.content}
@@ -238,6 +261,7 @@ class Post extends Component {
                 </Card.Content>
               : null}
             </Card>
+
             <div className='Form'>
               <Form>
                 <TextArea 
@@ -274,6 +298,7 @@ const createCommentMutation = gql`
         content
         created_at
         user {
+          id
           username
         }
         likes {
@@ -297,6 +322,7 @@ const createLikeMutation = gql`
       like {
         post {
           content
+          created_at
           user {
             id
             username
@@ -314,6 +340,7 @@ const createLikeMutation = gql`
           comments {
             id
             content
+            created_at
             user {
               id
               username
@@ -338,8 +365,37 @@ const deletePostMutation = gql`
   }
 `;
 
+const deleteCommentMutation = gql`
+  mutation deleteCommentMutation($comment_id: Int!, $user_id: Int!) {
+    deleteComment(comment_id: $comment_id, user_id: $user_id) {
+      commentDeleted
+      comment {
+        post {
+          comments {
+            id
+            content
+            created_at
+            user {
+              id
+              username
+            }
+            likes {
+              user {
+                id
+                username
+              }
+            }
+          }
+        }
+      }
+      error
+    }
+  }
+`;
+
 export default compose(
   graphql(createCommentMutation, {name: 'createCommentMutation'}),
   graphql(createLikeMutation, {name: 'createLikeMutation'}),
-  graphql(deletePostMutation, {name: 'deletePostMutation'})
+  graphql(deletePostMutation, {name: 'deletePostMutation'}),
+  graphql(deleteCommentMutation, {name: 'deleteCommentMutation'})
 )(Post);

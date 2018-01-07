@@ -12,6 +12,10 @@ module.exports = {
       // console.log('obj', obj);
       const query = await db.query(`select * from users where id = ${obj.user_id}`);
       return query.rows[0];
+    },
+    post: async (obj) => {
+      const query = await db.query(`select * from posts where id = ${obj.post_id}`);
+      return query.rows[0];
     }
   },
 
@@ -47,14 +51,20 @@ module.exports = {
       }
     },
 
-    removeComment: async (_, args) => {
+    deleteComment: async (_, args, { user }) => {
       try {
         console.log('args', args);
-        await db.query(`delete from comments where id = ${args.comment_id}`);
-        return true;
+        const query = await db.query(`delete from comments where id = ${args.comment_id} and user_id = ${args.user_id} returning *`);
+        return {
+          commentDeleted: true,
+          comment: query.rows[0]
+        };
       } catch(err) {
         console.log(err);
-        return false;
+        return {
+          commentDeleted: false,
+          error: err
+        };
       }
     }
   }

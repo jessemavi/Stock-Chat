@@ -48,7 +48,7 @@ class LoggedInHeader extends Component {
                     <Menu.Item name='Profile' href='/profile'></Menu.Item>
                   </Grid.Row>
                   <Grid.Row>
-                    <Menu.Item name='Sign Out' onClick={this.onSignOutClick} href='login'></Menu.Item>
+                    <Menu.Item name='Sign Out' onClick={this.onSignOutClick} href='/login'></Menu.Item>
                   </Grid.Row>
                 </Grid>
               </Popup>
