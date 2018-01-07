@@ -2,6 +2,7 @@ module.exports = `
   type Post {
     id: Int!
     content: String!
+    created_at: String!
     stock: Stock!
     user: User!
     comments: [Comment!]!
@@ -12,7 +13,7 @@ module.exports = `
     allPosts: [Post!]!
     allPostsForStock(stock_id: Int!): [Post!]!
     allPostsForUser: [Post!]!
-    post(post_id: Int!) : Post!
+    post(post_id: Int!): Post!
   }
 
   type CreatePostResponse {

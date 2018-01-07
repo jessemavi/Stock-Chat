@@ -23,6 +23,7 @@ class Posts extends Component {
         allPostsForStock(stock_id: ${JSON.parse(this.props.match.params.stock_id)}) {
           id
           content
+          created_at
           user {
             username
           }
@@ -152,6 +153,7 @@ class Posts extends Component {
             >
               <Card.Content>
                 <Card.Header>{post.user.username}</Card.Header>
+                <Card.Meta>{post.created_at}</Card.Meta>
                 <Card.Description>{post.content}</Card.Description>
               </Card.Content>
               <Card.Content extra>
@@ -175,6 +177,7 @@ const createPostMutation = gql`
       post {
         id
         content
+        created_at
         user {
           username
         }

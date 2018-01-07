@@ -24,6 +24,7 @@ class Post extends Component {
       {
         post(post_id: ${JSON.parse(this.props.match.params.post_id)}) {
           content
+          created_at
           user {
             id
             username
@@ -41,6 +42,7 @@ class Post extends Component {
           comments {
             id
             content
+            created_at
             user {
               id
               username
@@ -182,6 +184,7 @@ class Post extends Component {
                     </Dropdown>
                   : null}
                 </Card.Header>
+                <Card.Meta>{this.state.post.created_at}</Card.Meta>
                 <Card.Description>{this.state.post.content}</Card.Description>
               </Card.Content>
               <Card.Content extra>
@@ -208,7 +211,7 @@ class Post extends Component {
                           <Feed.Content>
                             <Feed.Summary>
                               {comment.user.username}
-                              <Feed.Date>4 days ago</Feed.Date>
+                              <Feed.Date>{comment.created_at}</Feed.Date>
                             </Feed.Summary>
                             <Feed.Extra text>
                               {comment.content}
@@ -269,6 +272,7 @@ const createCommentMutation = gql`
       comment {
         id
         content
+        created_at
         user {
           username
         }

@@ -2,6 +2,7 @@ module.exports = `
   type Comment {
     id: Int!
     content: String!
+    created_at: String!
     post: Post!
     user: User!
     likes: [Like!]!

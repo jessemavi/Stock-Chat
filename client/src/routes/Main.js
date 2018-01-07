@@ -74,8 +74,8 @@ class Main extends Component {
             >
               <Card.Content>
                 <Card.Header>{post.user.username}</Card.Header>
-                <Card.Meta>{post.stock.name}</Card.Meta>
-                <Card.Meta>{post.stock.symbol}</Card.Meta>
+                <Card.Meta>{post.stock.name} {`(${post.stock.symbol})`}</Card.Meta>
+                <Card.Meta>{post.created_at}</Card.Meta>
                 <Card.Description>{post.content}</Card.Description>
               </Card.Content>
               <Card.Content extra>
@@ -107,6 +107,7 @@ const allPostsQuery = gql`
   {
     allPosts {
       id
+      created_at
       user {
         username
       }
