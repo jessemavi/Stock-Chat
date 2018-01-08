@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import gql from 'graphql-tag';
-import { Menu, Container, Button, Grid, Popup } from 'semantic-ui-react';
+import { Menu, Container, Button, Grid, Popup, Dropdown } from 'semantic-ui-react';
 
 import client from './index';
 
@@ -38,22 +38,20 @@ class LoggedInHeader extends Component {
       <Menu size='huge'>
         <Container>
           <Menu.Menu position='left'>
-            <Menu.Item>Stock Chat</Menu.Item>
+            <Menu.Item href='/main'>Stock Chat</Menu.Item>
           </Menu.Menu>
-          <Menu.Menu position='right'>
-            <Menu.Item fitted='vertically'>
-              <Popup trigger={<Button content={this.state.user.username} color='green' />} on='click' size='large'>
-                <Grid divided columns='equal' >
-                  <Grid.Row>
-                    <Menu.Item name='Profile' href='/profile'></Menu.Item>
-                  </Grid.Row>
-                  <Grid.Row>
-                    <Menu.Item name='Sign Out' onClick={this.onSignOutClick} href='/login'></Menu.Item>
-                  </Grid.Row>
-                </Grid>
-              </Popup>
+
+          <Menu.Menu position='right'>          
+            <Menu.Item>
+              <Dropdown text={this.state.user.username} icon='user outline'>
+                <Dropdown.Menu>
+                  <Dropdown.Item text='Profile' href='/profile' />
+                  <Dropdown.Item text='Sign Out' onClick={this.onSignOutClick} href='/login' />
+                </Dropdown.Menu>
+              </Dropdown>
             </Menu.Item>
           </Menu.Menu>
+
         </Container>
       </Menu>
     )
