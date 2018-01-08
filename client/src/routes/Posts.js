@@ -115,56 +115,58 @@ class Posts extends Component {
       <div>
         <LoggedInHeader />
 
-        {this.state.stockData!== null ?
-          <div>
-            <Card centered={true} color='green'>
-              <Card.Content>
-                <Card.Header>{`${this.state.stockData.companyName} (${this.state.stockData.symbol})`}</Card.Header>
-                <Card.Meta>{this.state.stockData.primaryExchange}</Card.Meta>
-                <Card.Header>{this.state.stockData.latestPrice}</Card.Header>
-                <Card.Meta>{this.state.stockData.changePercent + '%'}</Card.Meta>
-              </Card.Content>
-            </Card>
+        <div className='posts-content'>
+          {this.state.stockData!== null ?
+            <div>
+              <Card centered={true} color='green'>
+                <Card.Content>
+                  <Card.Header>{`${this.state.stockData.companyName} (${this.state.stockData.symbol})`}</Card.Header>
+                  <Card.Meta>{this.state.stockData.primaryExchange}</Card.Meta>
+                  <Card.Header>{this.state.stockData.latestPrice}</Card.Header>
+                  <Card.Meta>{this.state.stockData.changePercent + '%'}</Card.Meta>
+                </Card.Content>
+              </Card>
 
-            <div className='Form'>
-              <Form>
-                <TextArea placeholder={`Ask a question or share something relevant about ${this.state.stockData.companyName}`} onChange={this.onAddPostChange} value={this.state.addPostContent} style={ { maxHeight: 75 } } />
-                <Button 
-                  disabled={this.state.addPostContent.length === 0}
-                  content='Add Post' 
-                  labelPosition='left' 
-                  icon='edit' 
-                  color='green' 
-                  size='tiny'
-                  onClick={this.onAddPost.bind(this, this.state.addPostContent)}
-                />
-              </Form>
+              <div className='Form'>
+                <Form>
+                  <TextArea placeholder={`Ask a question or share something relevant about ${this.state.stockData.companyName}`} onChange={this.onAddPostChange} value={this.state.addPostContent} style={ { maxHeight: 75 } } />
+                  <Button 
+                    disabled={this.state.addPostContent.length === 0}
+                    content='Add Post' 
+                    labelPosition='left' 
+                    icon='edit' 
+                    color='green' 
+                    size='tiny'
+                    onClick={this.onAddPost.bind(this, this.state.addPostContent)}
+                  />
+                </Form>
+              </div>
             </div>
-          </div>
-        : null}
+          : null}
 
-        {this.state.posts.length > 0 ? this.state.posts.map((post, index) => {
-          return (
-            <Card
-              className='card'
-              centered={true}
-              key={index}
-              onClick={this.onPostClick.bind(this, post.id)}
-            >
-              <Card.Content>
-                <Card.Header>{post.user.username}</Card.Header>
-                <Card.Meta>{post.created_at}</Card.Meta>
-                <Card.Description>{post.content}</Card.Description>
-              </Card.Content>
-              <Card.Content extra>
-                <Icon name='like' />
-                {post.likes.length} likes
-                <Icon name='comment' />
-                {post.comments.length} comments
-              </Card.Content>
-            </Card>
-          )
-        }) : null}
+          {this.state.posts.length > 0 ? this.state.posts.map((post, index) => {
+            return (
+              <Card
+                className='card'
+                centered={true}
+                key={index}
+                onClick={this.onPostClick.bind(this, post.id)}
+              >
+                <Card.Content>
+                  <Card.Header>{post.user.username}</Card.Header>
+                  <Card.Meta>{post.created_at}</Card.Meta>
+                  <Card.Description>{post.content}</Card.Description>
+                </Card.Content>
+                <Card.Content extra>
+                  <Icon name='like' />
+                  {post.likes.length} likes
+                  <Icon name='comment' />
+                  {post.comments.length} comments
+                </Card.Content>
+              </Card>
+            )
+          }) : null}
+        </div>
       </div>
     )
   }

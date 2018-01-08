@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Card, Feed, Icon, Form, TextArea, Button, Dropdown } from 'semantic-ui-react';
+import './Post.css';
 
 import LoggedInHeader from '../LoggedInHeader';
 import client from '../index';
@@ -202,115 +203,117 @@ class Post extends Component {
       <div>
         <LoggedInHeader />
         
-        {this.state.stockData!== null ?
-            <Card centered={true} color='green'>
-              <Card.Content>
-                <Card.Header>{this.state.stockData.companyName}</Card.Header>
-                <Card.Meta>{this.state.stockData.primaryExchange}</Card.Meta>
-                <Card.Header>{this.state.stockData.latestPrice}</Card.Header>
-                <Card.Meta>{this.state.stockData.changePercent + '%'}</Card.Meta>
-              </Card.Content>
-            </Card>
-        : null}
-
-        {this.state.post ? 
-          <div>
-            <Card centered={true}>
-              <Card.Content>
-                <Card.Header>
-                  {this.state.post.user.username}
-                  {this.state.post.user.id === JSON.parse(localStorage.getItem('user_id')) ?
-                    <Dropdown className='post-delete-icon' icon='chevron down' upward={false}>
-                      <Dropdown.Menu>
-                        <Dropdown.Item text={'Delete Post'} onClick={this.onDeletePost} />
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  : null}
-                </Card.Header>
-                <Card.Meta>{this.state.post.created_at}</Card.Meta>
-                <Card.Description>{this.state.post.content}</Card.Description>
-              </Card.Content>
-              <Card.Content extra>
-                <Icon 
-                  name='like' 
-                  onClick={
-                    this.state.post.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? this.onPostRemoveLikeClick : this.onPostLikeClick
-                  } 
-                  color={
-                    this.state.post.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? 'red' : null
-                  }
-                />
-                {this.state.post.likes.length} likes
-                <Icon name='comment' />
-                {this.state.comments.length} comments
-              </Card.Content>
-
-              {this.state.comments.length > 0 ?
+        <div className='post-content'>
+          {this.state.stockData!== null ?
+              <Card centered={true} color='green'>
                 <Card.Content>
-                  <Feed>
-                    {this.state.comments.map((comment, index) => {
-                      return (
-                        <Feed.Event key={index}>
-                          <Feed.Content>
-                            <Feed.Summary>
-                              {comment.user.username}
-                              <Feed.Date>{comment.created_at}</Feed.Date>
-                              {comment.user.id === JSON.parse(localStorage.getItem('user_id')) ?
-                                <Dropdown className='comment-delete-icon' icon='chevron down' upward={false}>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item text={'Delete Comment'} onClick={this.onDeleteComment.bind(this, comment.id)} />
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              : null}
-                            </Feed.Summary>
-                            <Feed.Extra text>
-                              {comment.content}
-                            </Feed.Extra>
-                            <Feed.Meta>
-                              <Feed.Like>
-                                <Icon 
-                                  name='like'
-                                  onClick={
-                                    comment.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? this.onCommentRemoveLikeClick.bind(this, comment.id) : this.onCommentLikeClick.bind(this, comment.id)
-
-                                  }
-                                  color={
-                                    comment.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? 'red' : null
-                                  }
-                                />
-                                {comment.likes.length} Likes
-                              </Feed.Like>
-                            </Feed.Meta>
-                          </Feed.Content>
-                        </Feed.Event>
-                      )
-                    })}
-                  </Feed>
+                  <Card.Header>{this.state.stockData.companyName}</Card.Header>
+                  <Card.Meta>{this.state.stockData.primaryExchange}</Card.Meta>
+                  <Card.Header>{this.state.stockData.latestPrice}</Card.Header>
+                  <Card.Meta>{this.state.stockData.changePercent + '%'}</Card.Meta>
                 </Card.Content>
-              : null}
-            </Card>
+              </Card>
+          : null}
 
-            <div className='Form'>
-              <Form>
-                <TextArea 
-                  placeholder='Add a comment' 
-                  style={ { maxHeight: 55 } } 
-                  value={this.state.addCommentContent} 
-                  onChange={this.onAddCommentChange}
-                />
-                <Button 
-                  disabled={this.state.addCommentContent.length === 0}
-                  content='Add Comment'
-                  labelPosition='left' 
-                  icon='edit' 
-                  color='green' 
-                  size='tiny'
-                  onClick={this.onAddComment.bind(this, this.state.addCommentContent)}
-                />
-              </Form>
+          {this.state.post ? 
+            <div>
+              <Card centered={true}>
+                <Card.Content>
+                  <Card.Header>
+                    {this.state.post.user.username}
+                    {this.state.post.user.id === JSON.parse(localStorage.getItem('user_id')) ?
+                      <Dropdown className='post-delete-icon' icon='chevron down' upward={false}>
+                        <Dropdown.Menu>
+                          <Dropdown.Item text={'Delete Post'} onClick={this.onDeletePost} />
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    : null}
+                  </Card.Header>
+                  <Card.Meta>{this.state.post.created_at}</Card.Meta>
+                  <Card.Description>{this.state.post.content}</Card.Description>
+                </Card.Content>
+                <Card.Content extra>
+                  <Icon 
+                    name='like' 
+                    onClick={
+                      this.state.post.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? this.onPostRemoveLikeClick : this.onPostLikeClick
+                    } 
+                    color={
+                      this.state.post.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? 'red' : null
+                    }
+                  />
+                  {this.state.post.likes.length} likes
+                  <Icon name='comment' />
+                  {this.state.comments.length} comments
+                </Card.Content>
+
+                {this.state.comments.length > 0 ?
+                  <Card.Content>
+                    <Feed>
+                      {this.state.comments.map((comment, index) => {
+                        return (
+                          <Feed.Event key={index}>
+                            <Feed.Content>
+                              <Feed.Summary>
+                                {comment.user.username}
+                                <Feed.Date>{comment.created_at}</Feed.Date>
+                                {comment.user.id === JSON.parse(localStorage.getItem('user_id')) ?
+                                  <Dropdown className='comment-delete-icon' icon='chevron down' upward={false}>
+                                    <Dropdown.Menu>
+                                      <Dropdown.Item text={'Delete Comment'} onClick={this.onDeleteComment.bind(this, comment.id)} />
+                                    </Dropdown.Menu>
+                                  </Dropdown>
+                                : null}
+                              </Feed.Summary>
+                              <Feed.Extra text>
+                                {comment.content}
+                              </Feed.Extra>
+                              <Feed.Meta>
+                                <Feed.Like>
+                                  <Icon 
+                                    name='like'
+                                    onClick={
+                                      comment.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? this.onCommentRemoveLikeClick.bind(this, comment.id) : this.onCommentLikeClick.bind(this, comment.id)
+
+                                    }
+                                    color={
+                                      comment.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? 'red' : null
+                                    }
+                                  />
+                                  {comment.likes.length} Likes
+                                </Feed.Like>
+                              </Feed.Meta>
+                            </Feed.Content>
+                          </Feed.Event>
+                        )
+                      })}
+                    </Feed>
+                  </Card.Content>
+                : null}
+              </Card>
+
+              <div className='Form'>
+                <Form>
+                  <TextArea 
+                    placeholder='Add a comment' 
+                    style={ { maxHeight: 55 } } 
+                    value={this.state.addCommentContent} 
+                    onChange={this.onAddCommentChange}
+                  />
+                  <Button 
+                    disabled={this.state.addCommentContent.length === 0}
+                    content='Add Comment'
+                    labelPosition='left' 
+                    icon='edit' 
+                    color='green' 
+                    size='tiny'
+                    onClick={this.onAddComment.bind(this, this.state.addCommentContent)}
+                  />
+                </Form>
+              </div>
             </div>
-          </div>
-        : null}
+          : null}
+        </div>
 
       </div>
     )

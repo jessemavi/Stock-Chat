@@ -35,7 +35,7 @@ class LoggedInHeader extends Component {
 
   render() {
     return (
-      <Menu size='huge'>
+      <Menu size='huge' fixed={'top'}>
         <Container>
           <Menu.Menu position='left'>
             <Menu.Item href='/main'>Stock Chat</Menu.Item>
