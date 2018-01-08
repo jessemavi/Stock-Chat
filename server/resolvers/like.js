@@ -9,9 +9,8 @@ module.exports = {
     },
     post: async (obj) => {
       // should have post_id in obj
-      // console.log('obj', obj);
       const query = await db.query(`select * from posts where id = ${obj.post_id}`);
-      console.log('post', query.rows[0]);
+      // console.log('post', query.rows[0]);
       return query.rows[0];
     }
   },
@@ -36,9 +35,10 @@ module.exports = {
   },
 
   Mutation: {
-    createLike: async (_, args) => {
+    createLike: async (_, args, { user }) => {
+      console.log('args', args);
+      console.log('user', user);
       try {
-        console.log('args', args);
         let type;
         let valueToInsert;
         if(args.post_id && !args.comment_id) {
@@ -48,7 +48,7 @@ module.exports = {
           type = 'comment';
           valueToInsert = args.comment_id;
         }
-        const query = await db.query(`insert into likes (${type}_id, user_id) values (${valueToInsert}, ${args.user_id}) returning *`);
+        const query = await db.query(`insert into likes (${type}_id, user_id) values (${valueToInsert}, ${user.user}) returning *`);
         console.log('query row', query.rows[0]);
         if(query.rows[0].comment_id && args.post_id) {
           query.rows[0].post_id = args.post_id
@@ -67,18 +67,34 @@ module.exports = {
       }
     },
 
-    removeLike : async (_, args) => {
+    removeLike : async (_, args, { user }) => {
       try {
-        console.log('args', args);
-        if(args.post_id) {
-          await db.query(`delete from likes where post_id = ${args.post_id} and user_id = ${args.user_id}`);
+        // console.log('args', args);
+        let type;
+        let argsValue;
+        if(args.post_id && !args.comment_id) {
+          type = 'post';
+          argsValue = args.post_id;
         } else if(args.comment_id) {
-          await db.query(`delete from likes where comment_id = ${args.comment_id} and user_id = ${args.user_id}`);
+          type = 'comment';
+          argsValue = args.comment_id;
         }
-        return true;
+
+        const query = await db.query(`delete from likes where ${type}_id = ${argsValue} and user_id = ${user.user} returning *`);
+
+        if(query.rows[0].comment_id && args.post_id) {
+          query.rows[0].post_id = args.post_id
+        }
+        return {
+          likeRemoved: true,
+          like: query.rows[0]
+        };
       } catch(err) {
         console.log(err);
-        return false;
+        return {
+          likeRemoved: false,
+          error: query.rows[0]
+        };
       }
     }
   }

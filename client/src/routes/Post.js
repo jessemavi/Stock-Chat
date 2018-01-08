@@ -115,7 +115,7 @@ class Post extends Component {
     // console.log('post liked');
     try {
       const response = await this.props.createLikeMutation({
-        variables: { post_id: JSON.parse(this.props.match.params.post_id), user_id: localStorage.getItem('user_id') }
+        variables: { post_id: JSON.parse(this.props.match.params.post_id) }
       });
       console.log('response', response);
       await this.setState({
@@ -131,7 +131,7 @@ class Post extends Component {
     // console.log('commentID', commentID);
     try {
       const response = await this.props.createLikeMutation({
-        variables: { comment_id: commentID, post_id: JSON.parse(this.props.match.params.post_id), user_id: localStorage.getItem('user_id') }
+        variables: { comment_id: commentID, post_id: JSON.parse(this.props.match.params.post_id) }
       });
       console.log('response', response);
       await this.setState({
@@ -164,6 +164,33 @@ class Post extends Component {
       const commentsFromResponse = response.data.deleteComment.comment.post.comments;
       await this.setState({
         comments: commentsFromResponse
+      });
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
+  onPostRemoveLikeClick = async () => {
+    try {
+      const response = await this.props.removeLikeMutation({
+        variables: { post_id: JSON.parse(this.props.match.params.post_id) }
+      });
+      console.log('response from removeLikeMutation', response);
+      await this.setState({
+        post: response.data.removeLike.like.post
+      });
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
+  onCommentRemoveLikeClick = async (commentID) => {
+    try {
+      const response = await this.props.removeLikeMutation({
+        variables: { comment_id: commentID, post_id: JSON.parse(this.props.match.params.post_id) }
+      });
+      await this.setState({
+        comments: response.data.removeLike.like.post.comments.slice()
       });
     } catch(err) {
       console.log(err);
@@ -207,7 +234,7 @@ class Post extends Component {
                 <Icon 
                   name='like' 
                   onClick={
-                    this.state.post.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? null : this.onPostLikeClick
+                    this.state.post.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? this.onPostRemoveLikeClick : this.onPostLikeClick
                   } 
                   color={
                     this.state.post.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? 'red' : null
@@ -244,7 +271,8 @@ class Post extends Component {
                                 <Icon 
                                   name='like'
                                   onClick={
-                                    comment.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? null : this.onCommentLikeClick.bind(this, comment.id)
+                                    comment.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? this.onCommentRemoveLikeClick.bind(this, comment.id) : this.onCommentLikeClick.bind(this, comment.id)
+
                                   }
                                   color={
                                     comment.likes.filter(like => like.user.id === JSON.parse(localStorage.getItem('user_id'))).length > 0 ? 'red' : null
@@ -316,9 +344,53 @@ const createCommentMutation = gql`
 // https://github.com/apollographql/apollo-client/issues/2510
 
 const createLikeMutation = gql`
-  mutation createLikeMutation($post_id: Int, $comment_id: Int, $user_id: Int!) {
-    createLike(post_id: $post_id, comment_id: $comment_id, user_id: $user_id) {
+  mutation createLikeMutation($post_id: Int, $comment_id: Int) {
+    createLike(post_id: $post_id, comment_id: $comment_id) {
       likeCreated
+      like {
+        post {
+          content
+          created_at
+          user {
+            id
+            username
+          }
+          stock {
+            id
+            symbol
+          }
+          likes {
+            user {
+              id
+              username
+            }
+          }
+          comments {
+            id
+            content
+            created_at
+            user {
+              id
+              username
+            }
+            likes {
+              user {
+                id
+                username
+              }
+            }
+          }
+        }
+      }
+      error
+    }
+  }
+`;
+
+const removeLikeMutation = gql`
+  mutation removeLikeMutation($post_id: Int, $comment_id: Int) {
+    removeLike(post_id: $post_id, comment_id: $comment_id) {
+      likeRemoved
       like {
         post {
           content
@@ -397,5 +469,6 @@ export default compose(
   graphql(createCommentMutation, {name: 'createCommentMutation'}),
   graphql(createLikeMutation, {name: 'createLikeMutation'}),
   graphql(deletePostMutation, {name: 'deletePostMutation'}),
-  graphql(deleteCommentMutation, {name: 'deleteCommentMutation'})
+  graphql(deleteCommentMutation, {name: 'deleteCommentMutation'}),
+  graphql(removeLikeMutation, {name: 'removeLikeMutation'})
 )(Post);

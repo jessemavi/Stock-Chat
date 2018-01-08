@@ -1,7 +1,7 @@
 import React, { Component} from 'react';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Dropdown, Card, Container, Icon } from 'semantic-ui-react'
+import { Dropdown, Card, Container, Icon, Menu } from 'semantic-ui-react'
 import './Main.css';
 
 import LoggedInHeader from '../LoggedInHeader';
@@ -79,7 +79,7 @@ class Main extends Component {
                 <Card.Description>{post.content}</Card.Description>
               </Card.Content>
               <Card.Content extra>
-                  <Icon name='like' />
+                  <Icon name='like' disabled={true} color='grey' />
                   {post.likes.length} likes
                   <Icon name='comment' />
                   {post.comments.length} comments
