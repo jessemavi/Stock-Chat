@@ -52,7 +52,8 @@ class Posts extends Component {
   }
 
   componentDidMount = async () => {
-    console.log('props in componentDidMount', this.props);
+    // console.log('props in componentDidMount', this.props);
+    console.log('client cache data in componentDidMount', client.cache.data.data);
 
     const stockQueryResponse = await client.query({
       query: this.stockQuery
