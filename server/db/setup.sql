@@ -5,6 +5,7 @@ drop table if exists posts cascade;
 drop table if exists stocks cascade;
 drop table if exists comments cascade;
 drop table if exists likes;
+drop table if exists stocks_follow;
 
 create table users (
   id serial primary key,
@@ -40,6 +41,13 @@ create table likes (
   id serial primary key,
   post_id integer references posts(id) on delete cascade,
   comment_id integer references comments(id) on delete cascade,
+  user_id integer references users(id) not null,
+  created_at timestamp default now() not null
+);
+
+create table stocks_follow (
+  id serial primary key,
+  stock_id integer references stocks(id) not null,
   user_id integer references users(id) not null,
   created_at timestamp default now() not null
 );
