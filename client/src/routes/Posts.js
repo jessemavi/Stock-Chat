@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { graphql } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Card, Icon, Form, TextArea, Button } from 'semantic-ui-react';
 import './Posts.css';
@@ -52,7 +52,7 @@ class Posts extends Component {
   }
 
   componentDidMount = async () => {
-    // console.log('props in componentDidMount', this.props);
+    console.log('props in componentDidMount', this.props);
     console.log('client cache data in componentDidMount', client.cache.data.data);
 
     const stockQueryResponse = await client.query({
@@ -92,9 +92,9 @@ class Posts extends Component {
 
   onAddPost = async (content) => {
     try {
-      const response = await this.props.mutate({
+      const response = await this.props.createPostMutation({
         variables: { content: content, stock_id: JSON.parse(this.props.match.params.stock_id) }
-      })
+      });
       this.setState({
         addPostContent: ''
       });
@@ -105,6 +105,17 @@ class Posts extends Component {
         posts: posts
       });
       console.log('updated posts in state', this.state.posts);
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
+  onStockFollow = async () => {
+    try {
+      const response = await this.props.followStockMutation({
+        variables: { stock_id: JSON.parse(this.props.match.params.stock_id), user_id: localStorage.getItem('user_id') }
+      });
+      console.log('response from onStockFollow', response);
     } catch(err) {
       console.log(err);
     }
@@ -121,7 +132,16 @@ class Posts extends Component {
             <div>
               <Card centered={true} color='green'>
                 <Card.Content>
-                  <Card.Header>{`${this.state.stockData.companyName} (${this.state.stockData.symbol})`}</Card.Header>
+                  <Card.Header>
+                    {`${this.state.stockData.companyName} (${this.state.stockData.symbol})`}
+                    <Button 
+                      compact={true} 
+                      content='Follow' 
+                      size={'mini'}
+                      onClick={this.onStockFollow}
+                    >
+                    </Button>
+                  </Card.Header>
                   <Card.Meta>{this.state.stockData.primaryExchange}</Card.Meta>
                   <Card.Header>{this.state.stockData.latestPrice}</Card.Header>
                   <Card.Meta>{this.state.stockData.changePercent + '%'}</Card.Meta>
@@ -200,4 +220,22 @@ const createPostMutation = gql`
   }
 `;
 
-export default graphql(createPostMutation)(Posts);
+const followStockMutation = gql`
+  mutation followStockMutation($stock_id: Int!, $user_id: Int!) {
+    followStock(stock_id: $stock_id, user_id: $user_id) {
+      stockFollowed
+      stockFollow {
+        user {
+          username
+          email
+        }
+      }
+      error
+    }
+  }
+`;
+
+export default compose(
+  graphql(createPostMutation, {name: 'createPostMutation'}),
+  graphql(followStockMutation, {name: 'followStockMutation'})
+)(Posts);
