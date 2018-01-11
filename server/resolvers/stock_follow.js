@@ -14,9 +14,9 @@ module.exports = {
       return query.rows[0];
     },
 
-    allUsersForStock: async (_, args, { user }) => {
-      const query = await db.query(`select * from stocks_follow where stock_id = ${args.stock_id}`);
-      return query.rows[0];
+    userFollowsStock: async (_, args, { user }) => {
+      const query = await db.query(`select * from stocks_follow where stock_id = ${args.stock_id} and user_id = ${args.user_id}`);
+      return query.rows[0] !== undefined;
     }
   },
 

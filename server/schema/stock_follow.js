@@ -7,7 +7,7 @@ module.exports = `
 
   type Query {
     allStocksForUser(user_id: Int!): [Stock!]!
-    allUsersForStock(stock_id: Int!): [User!]!
+    userFollowsStock(stock_id: Int!, user_id: Int!): Boolean!
   }
 
   type FollowStockResponse {

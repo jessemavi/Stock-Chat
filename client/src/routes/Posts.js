@@ -13,7 +13,8 @@ class Posts extends Component {
     this.state = {
       posts: [],
       stockData: null,
-      addPostContent: ''
+      addPostContent: '',
+      followingStock: false
     }
 
     console.log('cache in Posts constructor', client.cache.data.data);
@@ -49,6 +50,12 @@ class Posts extends Component {
         }
       }
     `;
+
+    this.userFollowsStockQuery = gql`
+      {
+        userFollowsStock(stock_id: ${JSON.parse(this.props.match.params.stock_id)}, user_id: ${localStorage.getItem('user_id')})
+      }
+    `;
   }
 
   componentDidMount = async () => {
@@ -60,6 +67,13 @@ class Posts extends Component {
     });
     // console.log('stockQueryResponse', stockQueryResponse);
 
+    const userFollowsStockResponse = await client.query({
+      query: this.userFollowsStockQuery
+    });
+    this.setState({
+      followingStock: userFollowsStockResponse.data.userFollowsStock
+    });
+
     // fetching financial from external api info before posts so it will have the info when rendering
     const stockDataResponse = await(fetch(`https://api.iextrading.com/1.0/stock/${stockQueryResponse.data.stock.symbol}/quote`));
     const jsonStockDataResponse = await stockDataResponse.json();
@@ -67,7 +81,6 @@ class Posts extends Component {
     this.setState({
       stockData: jsonStockDataResponse
     });
-    // console.log('state in componentDidMount', this.state);
 
     const stockPostsResponse = await client.query({
       query: this.allPostsForStockQuery
@@ -115,11 +128,35 @@ class Posts extends Component {
       const response = await this.props.followStockMutation({
         variables: { stock_id: JSON.parse(this.props.match.params.stock_id), user_id: localStorage.getItem('user_id') }
       });
-      console.log('response from onStockFollow', response);
+      if(response.data.followStock.stockFollowed === true) {
+        this.setState({
+          followingStock: true
+        });
+      }
     } catch(err) {
       console.log(err);
     }
   }
+
+  onStockUnfollow = async () => {
+    try {
+      const response = await this.props.unfollowStockMutation({
+        variables: { stock_id: JSON.parse(this.props.match.params.stock_id), user_id: localStorage.getItem('user_id') }
+      });
+      if(response.data.unfollowStock === true) {
+        this.setState({
+          followingStock: false
+        });
+      }
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
+  // if user is not following stock -> show follow button
+    // onClick -> follow stock
+  // if user is following stock -> show following button
+    // onClick -> unFollow stock
 
   render() {
 
@@ -134,13 +171,30 @@ class Posts extends Component {
                 <Card.Content>
                   <Card.Header>
                     {`${this.state.stockData.companyName} (${this.state.stockData.symbol})`}
-                    <Button 
-                      compact={true} 
-                      content='Follow' 
-                      size={'mini'}
-                      onClick={this.onStockFollow}
-                    >
-                    </Button>
+
+                    {this.state.followingStock === false ? 
+                      <Button
+                        compact={true} 
+                        content='Follow' 
+                        size={'mini'}
+                        floated={'right'}
+                        basic={true}
+                        color={'green'}
+                        onClick={this.onStockFollow}
+                      >
+                      </Button>
+                    :
+                      <Button
+                        compact={true} 
+                        content='Following' 
+                        size={'mini'}
+                        floated={'right'}
+                        basic={false}
+                        color={'green'}
+                        onClick={this.onStockUnfollow}
+                      >
+                      </Button> 
+                    }
                   </Card.Header>
                   <Card.Meta>{this.state.stockData.primaryExchange}</Card.Meta>
                   <Card.Header>{this.state.stockData.latestPrice}</Card.Header>
@@ -235,7 +289,14 @@ const followStockMutation = gql`
   }
 `;
 
+const unfollowStockMutation = gql`
+  mutation unfollowStockMutation($stock_id: Int!, $user_id: Int!) {
+    unfollowStock(stock_id: $stock_id, user_id: $user_id)
+  }
+`;
+
 export default compose(
   graphql(createPostMutation, {name: 'createPostMutation'}),
-  graphql(followStockMutation, {name: 'followStockMutation'})
+  graphql(followStockMutation, {name: 'followStockMutation'}),
+  graphql(unfollowStockMutation, {name: 'unfollowStockMutation'})
 )(Posts);
