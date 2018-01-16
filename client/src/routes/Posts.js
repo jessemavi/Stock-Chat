@@ -5,6 +5,7 @@ import { Card, Icon, Form, TextArea, Button } from 'semantic-ui-react';
 import './Posts.css';
 
 import LoggedInHeader from '../LoggedInHeader';
+import StockPriceCard from './StockPriceCard';
 import client from '../index';
 
 class Posts extends Component {
@@ -59,7 +60,7 @@ class Posts extends Component {
   }
 
   componentDidMount = async () => {
-    console.log('props in componentDidMount', this.props);
+    // console.log('props in componentDidMount', this.props);
     console.log('client cache data in componentDidMount', client.cache.data.data);
 
     const stockQueryResponse = await client.query({
@@ -77,7 +78,7 @@ class Posts extends Component {
     // fetching financial from external api info before posts so it will have the info when rendering
     const stockDataResponse = await(fetch(`https://api.iextrading.com/1.0/stock/${stockQueryResponse.data.stock.symbol}/quote`));
     const jsonStockDataResponse = await stockDataResponse.json();
-    console.log('jsonStockDataResponse', jsonStockDataResponse);
+    // console.log('jsonStockDataResponse', jsonStockDataResponse);
     this.setState({
       stockData: jsonStockDataResponse
     });
@@ -153,16 +154,12 @@ class Posts extends Component {
     }
   }
 
-  // if user is not following stock -> show follow button
-    // onClick -> follow stock
-  // if user is following stock -> show following button
-    // onClick -> unFollow stock
-
   render() {
-
     return (
       <div>
         <LoggedInHeader />
+
+        <StockPriceCard />
 
         <div className='posts-content'>
           {this.state.stockData!== null ?

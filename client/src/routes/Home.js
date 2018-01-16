@@ -1,14 +1,31 @@
 import React, { Component } from 'react';
-import { Header } from 'semantic-ui-react';
+import { Header, Button } from 'semantic-ui-react';
 
 class Home extends Component {
   render() {
     return (
       <div>
-        <Header>
-          <a href='/signup'>Sign Up</a>
-          <a href='/login'>Login</a>
+        <Header
+          className
+          size='huge' 
+          textAlign='center'
+        >
+          Stock Chat
         </Header>
+        <div>
+          <Button 
+            size='big' 
+            content='Sign Up' 
+            onClick={() => this.props.history.push('/signup')}
+          >
+          </Button>
+          <Button 
+            size='big' 
+            content='Login'
+            onClick={() => this.props.history.push('/login')}
+          >
+          </Button>
+        </div>
       </div>
     )
   }
