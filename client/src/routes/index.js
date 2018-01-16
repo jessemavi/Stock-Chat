@@ -4,10 +4,8 @@ import decode from 'jwt-decode';
 
 import Home from './Home';
 import Main from './Main';
-import AllUsers from './AllUsers';
 import Signup from './Signup';
 import Login from './Login';
-import CreatePost from './CreatePost';
 import Posts from './Posts';
 import Post from './Post';
 import Profile from './Profile';
@@ -46,8 +44,6 @@ export default () => (
       <PrivateRoute path='/profile' exact component={Profile} />
       <PrivateRoute path='/posts/:stock_id' exact component={Posts} />
       <PrivateRoute path='/post/:post_id' exact component={Post} />
-      <PrivateRoute path='/all-users' exact component={AllUsers} />
-      <PrivateRoute path='/create-post' exact component={CreatePost} />
     </Switch>
   </BrowserRouter>
 );
