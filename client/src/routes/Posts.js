@@ -5,7 +5,6 @@ import { Card, Icon, Form, TextArea, Button } from 'semantic-ui-react';
 import './Posts.css';
 
 import LoggedInHeader from '../LoggedInHeader';
-import StockPriceCard from './StockPriceCard';
 import client from '../index';
 
 class Posts extends Component {
@@ -159,8 +158,6 @@ class Posts extends Component {
       <div>
         <LoggedInHeader />
 
-        <StockPriceCard />
-
         <div className='posts-content'>
           {this.state.stockData!== null ?
             <div>
@@ -230,7 +227,7 @@ class Posts extends Component {
                   <Card.Description>{post.content}</Card.Description>
                 </Card.Content>
                 <Card.Content extra>
-                  <Icon name='like' />
+                  <Icon name='like' disabled={true} color='grey' />
                   {post.likes.length} likes
                   <Icon name='comment' />
                   {post.comments.length} comments
