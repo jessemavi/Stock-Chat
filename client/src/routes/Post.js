@@ -14,7 +14,8 @@ class Post extends Component {
       comments: [],
       stockData: null,
       addCommentContent: '',
-      post: ''
+      post: '',
+      followingStock: false
     }
 
     console.log('props in Post', this.props);
@@ -58,6 +59,12 @@ class Post extends Component {
         }
       }
     `;
+
+    this.userFollowsStockQuery = gql`
+      query userFollowsStockQuery($stock_id: Int!, $user_id: Int!) {
+        userFollowsStock(stock_id: $stock_id, user_id: $user_id)
+      }
+    `;
   }
 
   componentDidMount = async () => {
@@ -70,11 +77,22 @@ class Post extends Component {
       post: postResponse.data.post
     });
 
+    const userFollowsStockResponse = await client.query({
+      query: this.userFollowsStockQuery, 
+      variables: {
+        stock_id: postResponse.data.post.stock.id,
+        user_id: localStorage.getItem('user_id')
+      }
+    });
+    console.log('userFollowsStockResponse', userFollowsStockResponse);
+
     const stockDataResponse = await(fetch(`https://api.iextrading.com/1.0/stock/${postResponse.data.post.stock.symbol}/quote`));
     const jsonStockDataResponse = await stockDataResponse.json();
     console.log('jsonStockDataResponse', jsonStockDataResponse);
+
     this.setState({
-      stockData: jsonStockDataResponse
+      stockData: jsonStockDataResponse,
+      followingStock: userFollowsStockResponse.data.userFollowsStock
     });
 
     this.setState({
@@ -90,9 +108,6 @@ class Post extends Component {
   }
 
   onAddComment = async (content) => {
-    // console.log('onAddComment');
-    // console.log('content', content);
-    // console.log(JSON.parse(this.props.match.params.post_id));
     try {
       const response = await this.props.createCommentMutation({
         variables: { content: content, post_id: JSON.parse(this.props.match.params.post_id) }
@@ -100,13 +115,12 @@ class Post extends Component {
       this.setState({
         addCommentContent: ''
       });
-      console.log('response comment', response);
+      // console.log('response comment', response);
       const comments = this.state.comments;
       comments.push(response.data.createComment.comment);
       await this.setState({
         comments: comments
       });
-      console.log('comments in state', this.state.comments);
     } catch(err) {
       console.log(err);
     }
@@ -198,6 +212,36 @@ class Post extends Component {
     }
   }
 
+  onStockFollow = async () => {
+    try {
+      const response = await this.props.followStockMutation({
+        variables: { stock_id: this.state.post.stock.id, user_id: localStorage.getItem('user_id') }
+      });
+      if(response.data.followStock.stockFollowed === true) {
+        this.setState({
+          followingStock: true
+        });
+      }
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
+  onStockUnfollow = async () => {
+    try {
+      const response = await this.props.unfollowStockMutation({
+        variables: { stock_id: this.state.post.stock.id, user_id: localStorage.getItem('user_id') }
+      });
+      if(response.data.unfollowStock === true) {
+        this.setState({
+          followingStock: false
+        });
+      }
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
   render() {
     return (
       <div>
@@ -207,7 +251,33 @@ class Post extends Component {
           {this.state.stockData!== null ?
               <Card centered={true} color='green'>
                 <Card.Content>
-                  <Card.Header>{this.state.stockData.companyName}</Card.Header>
+                  <Card.Header>
+                    {`${this.state.stockData.companyName} (${this.state.stockData.symbol})`}
+
+                    {this.state.followingStock === false ? 
+                      <Button
+                        compact={true} 
+                        content='Follow' 
+                        size={'mini'}
+                        floated={'right'}
+                        basic={true}
+                        color={'green'}
+                        onClick={this.onStockFollow}
+                      >
+                      </Button>
+                    :
+                      <Button
+                        compact={true} 
+                        content='Following' 
+                        size={'mini'}
+                        floated={'right'}
+                        basic={false}
+                        color={'green'}
+                        onClick={this.onStockUnfollow}
+                      >
+                      </Button> 
+                    }
+                  </Card.Header>
                   <Card.Meta>{this.state.stockData.primaryExchange}</Card.Meta>
                   <Card.Header>{this.state.stockData.latestPrice}</Card.Header>
                   <Card.Meta>{this.state.stockData.changePercent + '%'}</Card.Meta>
@@ -468,10 +538,33 @@ const deleteCommentMutation = gql`
   }
 `;
 
+const followStockMutation = gql`
+  mutation followStockMutation($stock_id: Int!, $user_id: Int!) {
+    followStock(stock_id: $stock_id, user_id: $user_id) {
+      stockFollowed
+      stockFollow {
+        user {
+          username
+          email
+        }
+      }
+      error
+    }
+  }
+`;
+
+const unfollowStockMutation = gql`
+  mutation unfollowStockMutation($stock_id: Int!, $user_id: Int!) {
+    unfollowStock(stock_id: $stock_id, user_id: $user_id)
+  }
+`;
+
 export default compose(
   graphql(createCommentMutation, {name: 'createCommentMutation'}),
-  graphql(createLikeMutation, {name: 'createLikeMutation'}),
-  graphql(deletePostMutation, {name: 'deletePostMutation'}),
   graphql(deleteCommentMutation, {name: 'deleteCommentMutation'}),
-  graphql(removeLikeMutation, {name: 'removeLikeMutation'})
+  graphql(createLikeMutation, {name: 'createLikeMutation'}),
+  graphql(removeLikeMutation, {name: 'removeLikeMutation'}),
+  graphql(deletePostMutation, {name: 'deletePostMutation'}),
+  graphql(followStockMutation, {name: 'followStockMutation'}),
+  graphql(unfollowStockMutation, {name: 'unfollowStockMutation'})
 )(Post);

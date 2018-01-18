@@ -49,8 +49,8 @@ module.exports = {
   Mutation: {
     createPost: requiresAuth.createResolver(async (_, args, { user }) => {
       try {
-        console.log('args in createPost mutation', args);
-        console.log('user', user);
+        // console.log('args in createPost mutation', args);
+        // console.log('user', user);
         // escape apostrophes before inserting into db
         const cleanedContent = args.content.replace(new RegExp("'", 'g'), "''");
         const query = await db.query(`
