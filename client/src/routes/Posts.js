@@ -5,6 +5,7 @@ import { Card, Icon, Form, TextArea, Button } from 'semantic-ui-react';
 import './Posts.css';
 
 import LoggedInHeader from '../LoggedInHeader';
+import StockPriceCard from './StockPriceCard';
 import client from '../index';
 
 class Posts extends Component {
@@ -12,7 +13,6 @@ class Posts extends Component {
     super(props);
     this.state = {
       posts: [],
-      stockData: null,
       addPostContent: '',
       followingStock: false
     }
@@ -47,6 +47,7 @@ class Posts extends Component {
         stock(stock_id: ${JSON.parse(this.props.match.params.stock_id)}) {
           symbol
           name
+          id
         }
       }
     `;
@@ -56,39 +57,28 @@ class Posts extends Component {
         userFollowsStock(stock_id: ${JSON.parse(this.props.match.params.stock_id)}, user_id: ${localStorage.getItem('user_id')})
       }
     `;
-  }
 
-  componentDidMount = async () => {
-    // console.log('props in componentDidMount', this.props);
-    console.log('client cache data in componentDidMount', client.cache.data.data);
+    const fetchPosts = async () => {
+      const stockQueryResponse = await client.query({
+        query: this.stockQuery
+      });
+      console.log('stockQueryResponse', stockQueryResponse);
+      await this.setState({
+        stock: stockQueryResponse.data.stock
+      });
 
-    const stockQueryResponse = await client.query({
-      query: this.stockQuery
-    });
-    // console.log('stockQueryResponse', stockQueryResponse);
+      console.log('state stock', this.state.stock);
 
-    const userFollowsStockResponse = await client.query({
-      query: this.userFollowsStockQuery
-    });
-    this.setState({
-      followingStock: userFollowsStockResponse.data.userFollowsStock
-    });
+      const stockPostsResponse = await client.query({
+        query: this.allPostsForStockQuery
+      });
+      console.log('stockPostsResponse', stockPostsResponse);
+      this.setState({
+        posts: stockPostsResponse.data.allPostsForStock.slice().reverse()
+      });
+    }
 
-    // fetching financial from external api info before posts so it will have the info when rendering
-    const stockDataResponse = await(fetch(`https://api.iextrading.com/1.0/stock/${stockQueryResponse.data.stock.symbol}/quote`));
-    const jsonStockDataResponse = await stockDataResponse.json();
-    // console.log('jsonStockDataResponse', jsonStockDataResponse);
-    this.setState({
-      stockData: jsonStockDataResponse
-    });
-
-    const stockPostsResponse = await client.query({
-      query: this.allPostsForStockQuery
-    });
-    console.log('stockPostsResponse', stockPostsResponse);
-    this.setState({
-      posts: stockPostsResponse.data.allPostsForStock.slice().reverse()
-    });
+    fetchPosts();
   }
 
   onPostClick = (post_id) => {
@@ -123,82 +113,23 @@ class Posts extends Component {
     }
   }
 
-  onStockFollow = async () => {
-    try {
-      const response = await this.props.followStockMutation({
-        variables: { stock_id: JSON.parse(this.props.match.params.stock_id), user_id: localStorage.getItem('user_id') }
-      });
-      if(response.data.followStock.stockFollowed === true) {
-        this.setState({
-          followingStock: true
-        });
-      }
-    } catch(err) {
-      console.log(err);
-    }
-  }
-
-  onStockUnfollow = async () => {
-    try {
-      const response = await this.props.unfollowStockMutation({
-        variables: { stock_id: JSON.parse(this.props.match.params.stock_id), user_id: localStorage.getItem('user_id') }
-      });
-      if(response.data.unfollowStock === true) {
-        this.setState({
-          followingStock: false
-        });
-      }
-    } catch(err) {
-      console.log(err);
-    }
-  }
-
   render() {
     return (
       <div>
         <LoggedInHeader />
 
         <div className='posts-content'>
-          {this.state.stockData!== null ?
+          {this.state.stock !== undefined ?
             <div>
-              <Card centered={true} color='green'>
-                <Card.Content>
-                  <Card.Header>
-                    {`${this.state.stockData.companyName} (${this.state.stockData.symbol})`}
-
-                    {this.state.followingStock === false ? 
-                      <Button
-                        compact={true} 
-                        content='Follow' 
-                        size={'mini'}
-                        floated={'right'}
-                        basic={true}
-                        color={'green'}
-                        onClick={this.onStockFollow}
-                      >
-                      </Button>
-                    :
-                      <Button
-                        compact={true} 
-                        content='Following' 
-                        size={'mini'}
-                        floated={'right'}
-                        basic={false}
-                        color={'green'}
-                        onClick={this.onStockUnfollow}
-                      >
-                      </Button> 
-                    }
-                  </Card.Header>
-                  <Card.Meta>{this.state.stockData.primaryExchange}</Card.Meta>
-                  <Card.Header>{this.state.stockData.latestPrice}</Card.Header>
-                  <Card.Meta>{this.state.stockData.changePercent + '%'}</Card.Meta>
-                </Card.Content>
-              </Card>
+              <StockPriceCard 
+                stockSymbol={this.state.stock.symbol} 
+                stockName={this.state.stock.name}
+                stockID={this.state.stock.id}
+              />
 
               <div className='Form'>
                 <Form>
-                  <TextArea placeholder={`Ask a question or share something relevant about ${this.state.stockData.companyName}`} onChange={this.onAddPostChange} value={this.state.addPostContent} style={ { maxHeight: 75 } } />
+                  <TextArea placeholder={`Ask a question or share something relevant about ${this.state.stock.name}`} onChange={this.onAddPostChange} value={this.state.addPostContent} style={ { maxHeight: 75 } } />
                   <Button 
                     disabled={this.state.addPostContent.length === 0}
                     content='Add Post' 
@@ -268,29 +199,6 @@ const createPostMutation = gql`
   }
 `;
 
-const followStockMutation = gql`
-  mutation followStockMutation($stock_id: Int!, $user_id: Int!) {
-    followStock(stock_id: $stock_id, user_id: $user_id) {
-      stockFollowed
-      stockFollow {
-        user {
-          username
-          email
-        }
-      }
-      error
-    }
-  }
-`;
-
-const unfollowStockMutation = gql`
-  mutation unfollowStockMutation($stock_id: Int!, $user_id: Int!) {
-    unfollowStock(stock_id: $stock_id, user_id: $user_id)
-  }
-`;
-
 export default compose(
-  graphql(createPostMutation, {name: 'createPostMutation'}),
-  graphql(followStockMutation, {name: 'followStockMutation'}),
-  graphql(unfollowStockMutation, {name: 'unfollowStockMutation'})
+  graphql(createPostMutation, {name: 'createPostMutation'})
 )(Posts);
