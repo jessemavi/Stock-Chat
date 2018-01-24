@@ -40,6 +40,7 @@ const verifyUser = async (req, res, next) => {
 
     } catch(err) {
       console.log('error in verifyUser middleware', err);
+      return err;
     }
   }
   next()

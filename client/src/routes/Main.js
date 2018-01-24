@@ -1,24 +1,13 @@
 import React, { Component} from 'react';
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Dropdown, Card, Container, Icon, Menu } from 'semantic-ui-react'
+import { Card, Icon } from 'semantic-ui-react'
 import './Main.css';
 
 import LoggedInHeader from '../LoggedInHeader';
+import StockSearchDropdown from './StockSearchDropdown';
 
 class Main extends Component {
-
-  state = { 
-    
-  }
-
-  onChange = async (event, { value }) => {
-    console.log('handleChange');
-    await this.setState({ value })
-    // stock is selected here -> move to stock posts page with posts for the stock selected
-    console.log('value', value);
-    this.props.history.push(`/posts/${value}`);
-  }
 
   onPostClick = async (post_id) => {
     // need to grab stock's id and then redirect to stock page
@@ -27,18 +16,8 @@ class Main extends Component {
   }
 
   render() {
-    // console.log('props', this.props);
 
-    const { value } = this.state
-    const stateOptions = []
     let allPosts;
-
-    if(this.props.allStocksQuery && this.props.allStocksQuery.allStocks) {
-      this.props.allStocksQuery.allStocks.forEach((stock, index) => {
-        stateOptions.push({key: index, value: stock.id, text: `${stock.name} (${stock.symbol})`})
-      })
-      // console.log('stateOptions', stateOptions);
-    }
 
     if(this.props.allPostsQuery && this.props.allPostsQuery.allPosts) {
       allPosts = this.props.allPostsQuery.allPosts.slice(0, 10).reverse();
@@ -48,21 +27,8 @@ class Main extends Component {
     return (
       <div>
         <LoggedInHeader />
-        <div className='search-container'>
-          <Container textAlign='center'>
-            <Dropdown
-              placeholder='Search for a company by name or symbol'
-              fluid
-              search
-              selection
-              selectOnBlur={false}
-              selectOnNavigation={false}
-              options={stateOptions}
-              value={value}
-              onChange={this.onChange}
-            />
-          </Container>
-        </div>
+
+        <StockSearchDropdown propsFromMainComponent ={this.props} />
 
         {allPosts ? allPosts.map((post, index) => {
           return (
@@ -93,16 +59,6 @@ class Main extends Component {
   }
 };
 
-const allStocksQuery = gql`
-  {
-    allStocks {
-      id
-      name
-      symbol
-    }
-  }
-`;
-
 const allPostsQuery = gql`
   {
     allPosts {
@@ -127,7 +83,4 @@ const allPostsQuery = gql`
   }
 `;
 
-export default compose(
-  graphql(allStocksQuery, { name: 'allStocksQuery' }),
-  graphql(allPostsQuery, { name: 'allPostsQuery' })
-)(Main);
+export default graphql(allPostsQuery, { name: 'allPostsQuery' })(Main);

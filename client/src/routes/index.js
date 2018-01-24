@@ -11,10 +11,10 @@ import Post from './Post';
 import Profile from './Profile';
 
 const isAuthenticated = () => {
-  console.log('isAuthenticated');
   try {
     const token = localStorage.getItem('token');
     decode(token);
+    console.log('token decoded');
     return true;
   } catch(err) {
     console.log('err in isAuthenticated', err);
