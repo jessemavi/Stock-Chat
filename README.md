@@ -4,10 +4,11 @@ Stock Chat allows you to ask and answer questions or share something about a sto
 
 ## Built With
 
-* Node.js
-* Express
-* GraphQL
-* Apollo Server
-* Apollo Client
-* React
-* Semantic UI
+* [Node.js](https://nodejs.org/en/)
+* [Express](https://expressjs.com/)
+* [GraphQL](http://graphql.org/)
+* [Apollo Server](https://www.apollographql.com/)
+* [Apollo Client](https://www.apollographql.com/)
+* [React](https://reactjs.org/)
+* [Semantic UI React](https://react.semantic-ui.com/introduction)
+* [Investors Exchange API](https://iextrading.com/developer/)
