@@ -6,6 +6,7 @@ Stock Chat allows you to ask and answer questions or share something about a sto
 
 * [Node.js](https://nodejs.org/en/)
 * [Express](https://expressjs.com/)
+* [PostgreSQL](https://www.postgresql.org/)
 * [GraphQL](http://graphql.org/)
 * [Apollo Server](https://www.apollographql.com/)
 * [Apollo Client](https://www.apollographql.com/)
