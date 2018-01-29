@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import registerServiceWorker from './registerServiceWorker';
-import Routes from './routes';
+import Routes from './components/routes';
 import 'semantic-ui-css/semantic.min.css';
 
 import { ApolloProvider } from 'react-apollo';

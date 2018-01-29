@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import gql from 'graphql-tag';
-import { Menu, Container, Button, Grid, Popup, Dropdown } from 'semantic-ui-react';
+import { Menu, Container, Dropdown } from 'semantic-ui-react';
 
-import client from './index';
+import client from '../index';
 
 class LoggedInHeader extends Component {
   state = {

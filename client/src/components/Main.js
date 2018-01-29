@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import { Card, Icon } from 'semantic-ui-react'
 import './Main.css';
 
-import LoggedInHeader from '../LoggedInHeader';
+import LoggedInHeader from './LoggedInHeader';
 import StockSearchDropdown from './StockSearchDropdown';
 
 class Main extends Component {
@@ -28,7 +28,7 @@ class Main extends Component {
       <div>
         <LoggedInHeader />
 
-        <StockSearchDropdown propsFromMainComponent ={this.props} />
+        <StockSearchDropdown propsFromMainComponent={this.props} />
 
         {allPosts ? allPosts.map((post, index) => {
           return (

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Card, Feed, Icon, Form, TextArea, Button, Dropdown } from 'semantic-ui-react';
+import { Card, Button } from 'semantic-ui-react';
 
 import client from '../index';
 

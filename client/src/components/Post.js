@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import { Card, Feed, Icon, Form, TextArea, Button, Dropdown } from 'semantic-ui-react';
 import './Post.css';
 
-import LoggedInHeader from '../LoggedInHeader';
+import LoggedInHeader from './LoggedInHeader';
 import StockPriceCard from './StockPriceCard';
 import client from '../index';
 

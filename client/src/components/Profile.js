@@ -4,13 +4,7 @@ import gql from 'graphql-tag';
 import { Card, Icon } from 'semantic-ui-react';
 import './Profile.css';
 
-import LoggedInHeader from '../LoggedInHeader';
-
-// can wrap request in higher order component
-// make request for all posts from user
-// make request for all posts liked by user
-// probably won't need to have state to store data
-// render cards with links
+import LoggedInHeader from './LoggedInHeader';
 
 class Profile extends Component {
 
