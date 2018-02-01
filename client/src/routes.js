@@ -2,13 +2,13 @@ import React from 'react';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import decode from 'jwt-decode';
 
-import Home from './Home';
-import Main from './Main';
-import Signup from './Signup';
-import Login from './Login';
-import Posts from './Posts';
-import Post from './Post';
-import Profile from './Profile';
+import Home from './components/Home';
+import Main from './components/Main';
+import Signup from './components/Signup';
+import Login from './components/Login';
+import Posts from './components/Posts';
+import Post from './components/Post';
+import Profile from './components/Profile';
 
 const isAuthenticated = () => {
   try {

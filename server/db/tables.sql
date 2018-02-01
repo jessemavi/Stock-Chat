@@ -1,4 +1,7 @@
--- stock_chat database
+-- stock_chat database setup in psql
+
+create database stock_chat;
+\connect stock_chat
 
 drop table if exists users cascade;
 drop table if exists posts cascade;

@@ -14,6 +14,11 @@ class Signup extends Component {
   }
 
   onSubmit = async () => {
+    // if there is an old expired token in localStorage, remove it
+    if(localStorage.getItem('token') !== undefined) {
+      localStorage.removeItem('token');
+    }
+    
     await this.setState({
       usernameError: '',
       emailError: '',
