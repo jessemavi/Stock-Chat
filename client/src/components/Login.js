@@ -4,11 +4,15 @@ import gql from 'graphql-tag';
 import { Button, Form, Grid, Header, Message, Segment } from 'semantic-ui-react';
 
 class Login extends Component {
-  state = {
-    email: '',
-    emailError: '',
-    password: '',
-    passwordError: '',
+  constructor() {
+    super();
+    this.state = {
+      email: '',
+      emailError: '',
+      password: '',
+      passwordError: '',
+    }
+    
   }
 
   onSubmit = async () => {
@@ -70,9 +74,7 @@ class Login extends Component {
   };
 
   render() {
-
     const {email, emailError, password, passwordError} = this.state;
-
     const errorList = [];
 
     if(emailError) {
